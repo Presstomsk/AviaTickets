@@ -18,14 +18,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AviaTickets.Models;
 
 namespace AviaTickets.ViewModel
 {
     public class AviaTicketsViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;     
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private ServiceProvider _serviceProvider;
 
-       
+        
         private string _depCity;
         private string _arrCity;
         private DateTime _depDate = DateTime.Now;
@@ -39,6 +41,8 @@ namespace AviaTickets.ViewModel
 
         private RelayCommand _search;      
 
+        public List<Cities>? Cities { get; set; }
+        public List<TicketForm> Tickets { get; set; }
 
         public string DepCity
         {
@@ -173,34 +177,47 @@ namespace AviaTickets.ViewModel
 
         public RelayCommand Search
         {
-            get {  return _search; }
-            set { _search = value; }
+            get
+            {
+                return _search ?? (_search = new RelayCommand(obj => Find()));
+            }
         }   
 
 
-        public AviaTicketsViewModel(MainWindow mainWindow)       {
+        public AviaTicketsViewModel(MainWindow mainWindow)       
+        {
             
 
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             
             var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(serilog));            
-
-            var serviceProvider = new ServiceCollection()
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(serilog));              
+            
+            _serviceProvider = new ServiceCollection()
                                     .AddSingleton<MainWindow>(mainWindow)
                                     .AddSingleton<AviaTicketsViewModel>(this)
                                     .AddSingleton<IConfigurationRoot>(configuration)
                                     .AddSingleton<ILoggerFactory>(loggerFactory)
                                     .AddSingleton<ISchedulerFactory,SchedulerFactory>()
-                                    .AddSingleton<IAviaTicketsGetWorkflow,AviaTicketsGetWorkflow>()
+                                    .AddSingleton<ICitiesListCreatingWorkflow,CitiesListCreatingWorkflow>()
+                                    .AddTransient<IAviaTicketsGetWorkflow,AviaTicketsGetWorkflow>()
                                     .BuildServiceProvider();
-            Dispatcher.Start(serviceProvider);
 
+            Dispatcher.Start(_serviceProvider, ProcessType.CITIES_LIST_CREATING);
+
+        }
+
+        public void Find()
+        {
+            Dispatcher.Start(_serviceProvider, ProcessType.AVIA_TICKETS_GET);
         }
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        
     }
+   
 }

@@ -18,12 +18,16 @@ namespace AviaTickets.Processes
         private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
         private AviaTicketsViewModel _viewModel;
-        private List<TicketForm> tickets;
+        
 
 
         private string _token;
         private string _currency;
-        private List<Cities>? _cities;
+        private string _depCityCode;
+        private string _arrCityCode;
+        private string _depDateFormat;
+        private string _arrDateFormat;       
+
         public string WorkflowType { get; set; } = "AVIA_TICKETS_GET";
 
         public AviaTicketsGetWorkflow(ILoggerFactory loggerFactory
@@ -38,71 +42,77 @@ namespace AviaTickets.Processes
             _currency = configuration["Currency"];
 
             _mainWindow = mainWindow;
-
             _viewModel = viewModel;
-            _viewModel.Search = new RelayCommand(obj => SearchTicket());
+
 
             _scheduler = schedulerFactory.Create()
-                            .Do(() => { _cities = GetCities(); })
-                            .Do(SearchTicket);
+                            .Do(ChangeDateFormat)
+                            .Do(GetCitiesCodes)
+                            .Do(RequestAndCreatingTickets)
+                            .Do(AddTicketsToMainWindow);
         }
 
         public void Start()
-        {            
-            _scheduler.Start();
+        {
+            try
+            {
+                _scheduler.Start();
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogInformation(ex.Message, WorkflowType);
+            }
         }
 
-        public List<Cities>? GetCities()
+        public void ChangeDateFormat()
         {
-            var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
-            request.Run(_logger);
-            var response = request.Response;
-            var info = JsonConvert.DeserializeObject<List<Cities>>(response);
-            return info;
+            _depDateFormat = _viewModel.DepDate.ToString("yyyy-MM-dd");
+            _arrDateFormat = _viewModel.ArrDate.ToString("yyyy-MM-dd");
         }
 
-        public async void SearchTicket()
+        public void GetCitiesCodes()
         {
-            _mainWindow.Tickets.Children.Clear();
+            _depCityCode = GetCityCode(_viewModel.DepCity, _viewModel.Cities);
+            _arrCityCode = GetCityCode(_viewModel.ArrCity, _viewModel.Cities);
+        }
 
-
-            tickets = new List<TicketForm>();
-
-            var depDateFormat =_viewModel.DepDate.ToString("yyyy-MM-dd");
-            var arrDateFormat =_viewModel.ArrDate.ToString("yyyy-MM-dd");
-
-            var depCityCode = GetCityCode(_viewModel.DepCity, _cities);
-            var arrCityCode = GetCityCode(_viewModel.ArrCity, _cities);
+        public void RequestAndCreatingTickets()
+        {
+            _viewModel.Tickets = new List<TicketForm>();
 
             if (_viewModel.OneWayTicket)
             {
-                var result = await GetResult(depCityCode, arrCityCode, _currency, depDateFormat, default, _token, "true");
+                var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, "", _token, "true");
                 CreateTickets(result, _viewModel.OneWayTicket, false);
             }
-
             if (_viewModel.ReturnTicket)
             {
-                var result = await GetResult(depCityCode, arrCityCode, _currency, depDateFormat, arrDateFormat, _token, "true");
+                var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, _arrDateFormat, _token, "true");
                 CreateTickets(result, false, _viewModel.ReturnTicket);
             }
 
             if (_viewModel.OneWayTicket && _viewModel.WayWithTransferTicket)
             {
-                var result = await GetResult(depCityCode, arrCityCode, _currency, depDateFormat, default, _token, "false");
+                var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, "", _token, "false");
                 CreateTickets(result, _viewModel.OneWayTicket, false);
             }
 
             if (_viewModel.ReturnTicket && _viewModel.WayWithTransferTicket)
             {
-                var result = await GetResult(depCityCode, arrCityCode, _currency, depDateFormat, arrDateFormat, _token, "false");
+                var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, _arrDateFormat, _token, "false");
                 CreateTickets(result, false, _viewModel.ReturnTicket);
             }
 
-            tickets.Sort((a, b) => (a.DataContext as TicketFormViewModel).ShortPrice.CompareTo((b.DataContext as TicketFormViewModel).ShortPrice));
+            _viewModel.Tickets.Sort((a, b) => (a.DataContext as TicketFormViewModel).ShortPrice.CompareTo((b.DataContext as TicketFormViewModel).ShortPrice));
+        }
 
-            for (int i = tickets.Count - 1; i >= 0; i--)
+        public void AddTicketsToMainWindow()
+        {
+            _mainWindow.Tickets.Children.Clear();          
+
+            for (int i = _viewModel.Tickets.Count - 1; i >= 0; i--)
             {
-                _mainWindow.Tickets.Children.Insert(0, tickets[i]);
+                _mainWindow.Tickets.Children.Insert(0, _viewModel.Tickets[i]);
             }
         }
 
@@ -116,17 +126,13 @@ namespace AviaTickets.Processes
             return null;
         }
 
-        public async Task<Result?> GetResult(string depCity, string arrCity, string currency, string depDate, string arrDate, string token, string direct)
+        public Result? GetResult(string depCity, string arrCity, string currency, string depDate, string arrDate, string token, string direct)
         {
             var request = new GetRequest($"https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin={depCity}&destination={arrCity}&currency={currency}&departure_at={depDate}&return_at={arrDate}&sorting=price&direct={direct}&limit=30&token={token}");
-            var response = await Task.Run(() =>
-            {
-                request.Run(_logger);
-                var response = request.Response;
-                return response;
-            });
-            var info = await Task.Run(() => JsonConvert.DeserializeObject<Result>(response));
-            return info;
+            request.Run();
+            var response = request.Response;
+            var info = JsonConvert.DeserializeObject<Result>(response);
+            return info;            
         }
 
         public void CreateTickets(Result? info, bool oneWayTicket, bool returnTicket)
@@ -148,7 +154,7 @@ namespace AviaTickets.Processes
                 if (oneWayTicket) ticket.Pic = "Resources/OneWayStrelka.jpg";
                 if (returnTicket) ticket.Pic = "Resources/ReturnWay.jpg";
 
-                tickets.Add(ticketForm);
+                _viewModel.Tickets.Add(ticketForm);
             }
         }
 

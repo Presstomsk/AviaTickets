@@ -1,4 +1,5 @@
 ﻿using AviaTickets.Abstractions;
+using AviaTickets.Processes;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,20 @@ namespace AviaTickets.Сontrol
 {
     static class Dispatcher 
     {
-        public static void Start(IServiceProvider serviceProvider)
+        public static void Start(IServiceProvider serviceProvider, ProcessType process)
         {
-            serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();
+            switch (process)
+            {
+                case ProcessType.CITIES_LIST_CREATING:
+                    serviceProvider.GetService<ICitiesListCreatingWorkflow>()?.Start();
+                    break;
+                case ProcessType.AVIA_TICKETS_GET:
+                    serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();
+                    break;
+                default:
+                    break;
+            }
+            
         }
     }
 }

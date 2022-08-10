@@ -23,24 +23,13 @@ namespace AviaTickets.ViewModel
             _address = address;
         }
 
-        public void Run(ILogger<AviaTicketsGetWorkflow> logger)
+        public void Run()
         {
             _request = (HttpWebRequest)WebRequest.Create(_address);
-            _request.Method = "Get";
-
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)_request.GetResponse();
-                var stream = response.GetResponseStream();
-
-                if (stream != null) Response = new StreamReader(stream).ReadToEnd();
-            }
-            catch (Exception ex)
-            {
-                logger?.LogInformation(ex.Message, "Ошибка получения данных (GET)");
-            }
-
-
+            _request.Method = "Get";            
+            HttpWebResponse response = (HttpWebResponse)_request.GetResponse();
+            var stream = response.GetResponseStream();
+            if (stream != null) Response = new StreamReader(stream).ReadToEnd();
         }
     }
 
