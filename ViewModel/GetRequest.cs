@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AviaTickets.Processes;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +23,7 @@ namespace AviaTickets.ViewModel
             _address = address;
         }
 
-        public void Run(ILogger<AviaTicketsViewModel> logger)
+        public void Run(ILogger<AviaTicketsGetWorkflow> logger)
         {
             _request = (HttpWebRequest)WebRequest.Create(_address);
             _request.Method = "Get";
