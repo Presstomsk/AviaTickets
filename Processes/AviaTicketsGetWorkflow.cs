@@ -118,12 +118,15 @@ namespace AviaTickets.Processes
 
         public string GetCityCode(string mycity, List<Cities>? cities)
         {
-            foreach (var city in cities)
+            if (cities != null)
             {
-                if (city.City == mycity) return city.Code;
-                if (city.Code == mycity) return city.Code;
+                foreach (var city in cities)
+                {
+                    if (city.City == mycity) return city.Code;
+                    if (city.Code == mycity) return city.Code;
+                }
             }
-            return null;
+            return String.Empty;
         }
 
         public Result? GetResult(string depCity, string arrCity, string currency, string depDate, string arrDate, string token, string direct)
@@ -137,26 +140,28 @@ namespace AviaTickets.Processes
 
         public void CreateTickets(Result? info, bool oneWayTicket, bool returnTicket)
         {
-            foreach (var item in info.Data)
+            if (info != null) info.Data.ForEach(item =>
             {
                 var ticketForm = new TicketForm();
-                var ticket = ticketForm.DataContext as TicketFormViewModel;
-                ticket.Link = item.Link;
-                ticket.DepCity = item.Origin;
-                ticket.ArrCity = item.Destination;
-                if (oneWayTicket) ticket.SearchingMethod = "OneWayTicket";
-                if (returnTicket) ticket.SearchingMethod = "ReturnTicket";
-                ticket.Time = $"{ item.Duration / 60}ч. { item.Duration % 60}мин.";
-                ticket.Transfer = $"Кол-во пересадок: {item.Transfers}";
-                ticket.ShortPrice = item.Price;
-                ticket.Price = $"{ticket.ShortPrice} {info.Currency}";
-                ticket.Company = $"{item.Airline}\n{item.FlightNumber}";
-                if (oneWayTicket) ticket.Pic = "Resources/OneWayStrelka.jpg";
-                if (returnTicket) ticket.Pic = "Resources/ReturnWay.jpg";
+                var ticket = (ticketForm.DataContext != null) ? ticketForm.DataContext as TicketFormViewModel : default;
+                if (ticket != default)
+                {
+                    ticket.Link = item.Link;
+                    ticket.DepCity = item.Origin;
+                    ticket.ArrCity = item.Destination;
+                    if (oneWayTicket) ticket.SearchingMethod = "OneWayTicket";
+                    if (returnTicket) ticket.SearchingMethod = "ReturnTicket";
+                    ticket.Time = $"{ item.Duration / 60}ч. { item.Duration % 60}мин.";
+                    ticket.Transfer = $"Кол-во пересадок: {item.Transfers}";
+                    ticket.ShortPrice = item.Price;
+                    ticket.Price = $"{ticket.ShortPrice} {info.Currency}";
+                    ticket.Company = $"{item.Airline}\n{item.FlightNumber}";
+                    if (oneWayTicket) ticket.Pic = "Resources/OneWayStrelka.jpg";
+                    if (returnTicket) ticket.Pic = "Resources/ReturnWay.jpg";
 
-                _viewModel.Tickets.Add(ticketForm);
-            }
+                    _viewModel.Tickets.Add(ticketForm);
+                }
+            });         
         }
-
     }
 }
