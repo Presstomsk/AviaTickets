@@ -16,15 +16,16 @@ namespace AviaTickets.Processes
         private AviaTicketsViewModel _viewModel;
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING";        
 
-        public CitiesListCreatingWorkflow(ILoggerFactory loggerFactory
+        public CitiesListCreatingWorkflow(ILogger<CitiesListCreatingWorkflow> logger
             , ISchedulerFactory schedulerFactory            
             , AviaTicketsViewModel viewModel)
         {
-            _logger = loggerFactory.CreateLogger<CitiesListCreatingWorkflow>();   
+            _logger = logger;   
 
             _viewModel = viewModel;            
 
-            _scheduler = schedulerFactory.Create().Do(() => { _viewModel.Cities = GetCities(); });
+            _scheduler = schedulerFactory.Create()
+                                         .Do(GetCities);
                             
         }      
 
@@ -32,25 +33,25 @@ namespace AviaTickets.Processes
         {
             try
             {
+                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.START}");
                 _scheduler.Start();
+                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.DONE}");
             }
             catch (Exception ex)
-            {
-                _logger?.LogInformation(ex.Message, WorkflowType);               
+            {                
+                _logger?.LogError($"PROCESS: {WorkflowType} STATUS: {STATUS.ERROR}", ex.Message);
             }
 
         }
 
-        public List<Cities>? GetCities()
+        public void GetCities()
         { 
             
                 var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
                 request.Run();
                 var response = request.Response;
-                var info = JsonConvert.DeserializeObject<List<Cities>>(response);
-            int a = 2; int b = 2; int c = a / b;
-                return info;            
-   
+                var info = JsonConvert.DeserializeObject<List<Cities>>(response);            
+                _viewModel.Cities = info;
         }
     }
 }

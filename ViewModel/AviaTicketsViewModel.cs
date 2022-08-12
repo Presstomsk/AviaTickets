@@ -26,6 +26,7 @@ namespace AviaTickets.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private ServiceProvider _serviceProvider;
+        private ILogger<AviaTicketsViewModel> _logger;
 
         
         private string _depCity;
@@ -186,30 +187,30 @@ namespace AviaTickets.ViewModel
 
         public AviaTicketsViewModel(MainWindow mainWindow)       
         {
-            
-
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             
             var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(serilog));              
             
             _serviceProvider = new ServiceCollection()
                                     .AddSingleton<MainWindow>(mainWindow)
                                     .AddSingleton<AviaTicketsViewModel>(this)
                                     .AddSingleton<IConfigurationRoot>(configuration)
-                                    .AddSingleton<ILoggerFactory>(loggerFactory)
+                                    .AddLogging((config)=>config.AddSerilog(serilog))
+                                    .AddSingleton<IDispatcher, Dispatcher>()
                                     .AddSingleton<ISchedulerFactory,SchedulerFactory>()
-                                    .AddSingleton<ICitiesListCreatingWorkflow,CitiesListCreatingWorkflow>()
+                                    .AddSingleton<ICitiesListCreatingWorkflow,CitiesListCreatingWorkflow>()                                    
                                     .AddTransient<IAviaTicketsGetWorkflow,AviaTicketsGetWorkflow>()
                                     .BuildServiceProvider();
 
-            Dispatcher.Start(_serviceProvider, ProcessType.CITIES_LIST_CREATING);
+            _logger = _serviceProvider.GetService<ILoggerFactory>().CreateLogger<AviaTicketsViewModel>();
+            _logger.LogInformation($"APPLICATION {STATUS.START}");
 
+            _serviceProvider.GetService<IDispatcher>()?.Start(_serviceProvider, ProcessType.CITIES_LIST_CREATING);            
         }
 
         public void Find()
         {
-            Dispatcher.Start(_serviceProvider, ProcessType.AVIA_TICKETS_GET);
+            _serviceProvider.GetService<IDispatcher>()?.Start(_serviceProvider, ProcessType.AVIA_TICKETS_GET);            
         }
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

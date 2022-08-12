@@ -30,13 +30,13 @@ namespace AviaTickets.Processes
 
         public string WorkflowType { get; set; } = "AVIA_TICKETS_GET";
 
-        public AviaTicketsGetWorkflow(ILoggerFactory loggerFactory
+        public AviaTicketsGetWorkflow(ILogger<AviaTicketsGetWorkflow> logger
             , IConfigurationRoot configuration
             , ISchedulerFactory schedulerFactory
             , MainWindow mainWindow
             , AviaTicketsViewModel viewModel)
-        {           
-            _logger = loggerFactory.CreateLogger<AviaTicketsGetWorkflow>();
+        {
+            _logger = logger;
 
             _token = configuration["Token"];
             _currency = configuration["Currency"];
@@ -56,11 +56,13 @@ namespace AviaTickets.Processes
         {
             try
             {
+                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.START}");
                 _scheduler.Start();
+                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.DONE}");
             }
             catch (Exception ex)
             {
-                _logger?.LogInformation(ex.Message, WorkflowType);
+                _logger?.LogError($"PROCESS: {WorkflowType} STATUS: {STATUS.ERROR}", ex.Message);
             }
         }
 

@@ -11,4 +11,13 @@ namespace AviaTickets.Processes
         CITIES_LIST_CREATING,
         AVIA_TICKETS_GET
     }
+
+    public enum STATUS
+    {
+        DONE,
+        START,
+        ERROR
+    }
+
+
 }

@@ -1,4 +1,6 @@
 ﻿using AviaTickets.Abstractions;
+using AviaTickets.Processes;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,12 @@ namespace AviaTickets.Scheduler
     public class SchedulerFactory : ISchedulerFactory
     {
         private Queue<Action>? _scheduler;
+        private ILogger<ISchedulerFactory> _logger;
+        public SchedulerFactory(ILogger<ISchedulerFactory> logger)
+        {
+            _logger = logger;
+        }
+
         public ISchedulerFactory Create()
         {
             Clear();
@@ -23,10 +31,20 @@ namespace AviaTickets.Scheduler
             return this;
         }
         public void Start()
-        {            
+        {
+            var step = 1;
+
             while (_scheduler?.Count > 0)
-            { 
-               _scheduler?.Dequeue().Invoke();               
+            {
+                try
+                {                   
+                    _scheduler?.Peek().Invoke();
+                    _logger.LogInformation($"STEP[{step++}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"STEP[{step}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR}", ex.Message);
+                }
             }
 
             Clear();
