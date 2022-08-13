@@ -1,14 +1,8 @@
-﻿using AviaTickets.Processes;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AviaTickets.ViewModel
+
+namespace AviaTickets.Processes.HttpConnect
 {
     public class GetRequest
     {

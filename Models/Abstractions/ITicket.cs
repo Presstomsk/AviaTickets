@@ -1,11 +1,8 @@
 ﻿using AviaTickets.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AviaTickets.Abstractions
+
+namespace AviaTickets.Models.Abstractions
 {
     public interface ITicket
     {

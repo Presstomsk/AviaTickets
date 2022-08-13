@@ -1,5 +1,6 @@
-﻿using AviaTickets.Abstractions;
+﻿using AviaTickets.Converters.ParentClasses;
 using AviaTickets.Models;
+using AviaTickets.Models.Abstractions;
 using Newtonsoft.Json;
 using System;
 

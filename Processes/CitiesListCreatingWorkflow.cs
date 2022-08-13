@@ -1,6 +1,9 @@
-﻿using AviaTickets.Abstractions;
-using AviaTickets.Converters;
-using AviaTickets.Models;
+﻿using AviaTickets.Converters.ParentClasses;
+using AviaTickets.Models.Abstractions;
+using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.AllProcessesList;
+using AviaTickets.Processes.HttpConnect;
+using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

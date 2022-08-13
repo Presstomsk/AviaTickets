@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AviaTickets.Abstractions
+namespace AviaTickets.Processes.Abstractions
 {
-    public interface ICitiesListCreatingWorkflow : IWorkflow
+    public interface IInputDataValidationWorkflow : IWorkflow
     {
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace AviaTickets.Converters
+
+namespace AviaTickets.Converters.ParentClasses
 {
-    public class CitiesConverter : JsonConverter
+    public class TicketConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

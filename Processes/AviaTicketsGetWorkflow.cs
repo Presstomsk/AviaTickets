@@ -1,15 +1,16 @@
-﻿using AviaTickets.Abstractions;
-using AviaTickets.Converters;
-using AviaTickets.Models;
+﻿using AviaTickets.Converters.ParentClasses;
+using AviaTickets.Models.Abstractions;
+using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.AllProcessesList;
+using AviaTickets.Processes.HttpConnect;
+using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace AviaTickets.Processes
 {
@@ -109,7 +110,7 @@ namespace AviaTickets.Processes
                 CreateTickets(result, false, _viewModel.ReturnTicket);
             }
 
-            _viewModel.Tickets.Sort((a, b) => (a.DataContext as TicketFormViewModel).ShortPrice.CompareTo((b.DataContext as TicketFormViewModel).ShortPrice));
+            _viewModel.Tickets.Sort((a, b) => (a.DataContext as TicketUserControl).ShortPrice.CompareTo((b.DataContext as TicketUserControl).ShortPrice));
         }
 
         public void AddTicketsToMainWindow()
@@ -151,7 +152,7 @@ namespace AviaTickets.Processes
             if (info != null) info.Data.ForEach(item =>
             {
                 var ticketForm = new TicketForm();
-                var ticket = (ticketForm.DataContext != null) ? ticketForm.DataContext as TicketFormViewModel : default;
+                var ticket = (ticketForm.DataContext != null) ? ticketForm.DataContext as TicketUserControl : default;
                 if (ticket != default)
                 {
                     ticket.Link = item.Link;

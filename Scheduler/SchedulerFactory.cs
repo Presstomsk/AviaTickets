@@ -1,11 +1,9 @@
-﻿using AviaTickets.Abstractions;
-using AviaTickets.Processes;
+﻿using AviaTickets.Processes.AllProcessesList;
+using AviaTickets.Scheduler.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace AviaTickets.Scheduler
 {

@@ -14,7 +14,7 @@ namespace AviaTickets
         public TicketForm()
         {
             InitializeComponent();
-            DataContext = new TicketFormViewModel(this);
+            DataContext = new TicketUserControl();
         }
         
 

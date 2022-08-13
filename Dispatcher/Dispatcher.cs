@@ -1,18 +1,22 @@
-﻿using AviaTickets.Abstractions;
-using AviaTickets.Processes;
+﻿using AviaTickets.Dispatcher.Abstractions;
+using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.AllProcessesList;
 using AviaTickets.ViewModel;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AviaTickets.Сontrol
+
+namespace AviaTickets.Dispatcher
 {
     public class Dispatcher : IDispatcher
     {
+        private AviaTicketsViewModel _view;
+        public Dispatcher(AviaTicketsViewModel view)
+        {
+            _view = view;
+        }
+
         public void Start(IServiceProvider serviceProvider, ProcessType process)
         { 
             switch (process)
@@ -20,8 +24,9 @@ namespace AviaTickets.Сontrol
                 case ProcessType.CITIES_LIST_CREATING:
                     serviceProvider.GetService<ICitiesListCreatingWorkflow>()?.Start();
                     break;
-                case ProcessType.AVIA_TICKETS_GET:                    
-                    serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();                    
+                case ProcessType.AVIA_TICKETS_GET:
+                    serviceProvider.GetService<IInputDataValidationWorkflow>()?.Start();
+                    if (_view.WithoutValidationErrors) serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();                    
                     break;
                 default:
                     break;

@@ -5,9 +5,8 @@ using System.Windows.Controls;
 
 namespace AviaTickets.ViewModel
 {
-    public class TicketFormViewModel : UserControl, INotifyPropertyChanged
-    {
-        private UserControl _userControl;
+    public class TicketUserControl : UserControl, INotifyPropertyChanged
+    {       
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -129,9 +128,9 @@ namespace AviaTickets.ViewModel
             }
         }
 
-        public TicketFormViewModel(UserControl userControl)
+        public TicketUserControl()
         {
-            _userControl = userControl;
+            
         }
 
         public RelayCommand GoToLink
