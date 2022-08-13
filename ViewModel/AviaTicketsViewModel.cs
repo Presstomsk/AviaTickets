@@ -5,11 +5,9 @@ using AviaTickets.Scheduler;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -19,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AviaTickets.Models;
+using AviaTickets.Converters;
 
 namespace AviaTickets.ViewModel
 {
@@ -42,7 +41,7 @@ namespace AviaTickets.ViewModel
 
         private RelayCommand _search;      
 
-        public List<Cities>? Cities { get; set; }
+        public List<ICities>? Cities { get; set; }
         public List<TicketForm> Tickets { get; set; }
 
         public string DepCity
@@ -192,12 +191,16 @@ namespace AviaTickets.ViewModel
             var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
             
             _serviceProvider = new ServiceCollection()
-                                    .AddSingleton<MainWindow>(mainWindow)
-                                    .AddSingleton<AviaTicketsViewModel>(this)
-                                    .AddSingleton<IConfigurationRoot>(configuration)
+                                    .AddSingleton(mainWindow)
+                                    .AddSingleton(this)
+                                    .AddSingleton(configuration)
                                     .AddLogging((config)=>config.AddSerilog(serilog))
                                     .AddSingleton<IDispatcher, Dispatcher>()
-                                    .AddSingleton<ISchedulerFactory,SchedulerFactory>()
+                                    .AddSingleton<ISchedulerFactory, SchedulerFactory>()
+                                    .AddTransient<ICities,Models.Cities>()
+                                    .AddTransient<ITicket,Result>()
+                                    .AddSingleton<CitiesConverter, Converters.Cities>()
+                                    .AddSingleton<TicketConverter,Tickets>()                                    
                                     .AddSingleton<ICitiesListCreatingWorkflow,CitiesListCreatingWorkflow>()                                    
                                     .AddTransient<IAviaTicketsGetWorkflow,AviaTicketsGetWorkflow>()
                                     .BuildServiceProvider();

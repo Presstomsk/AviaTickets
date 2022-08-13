@@ -1,4 +1,5 @@
 ﻿using AviaTickets.Abstractions;
+using AviaTickets.Converters;
 using AviaTickets.Models;
 using AviaTickets.ViewModel;
 using Microsoft.Extensions.Logging;
@@ -13,16 +14,18 @@ namespace AviaTickets.Processes
     {
         private ILogger<CitiesListCreatingWorkflow> _logger;
         private ISchedulerFactory _scheduler;        
-        private AviaTicketsViewModel _viewModel;
+        private AviaTicketsViewModel _viewModel;        
+        private CitiesConverter _converter;
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING";        
 
         public CitiesListCreatingWorkflow(ILogger<CitiesListCreatingWorkflow> logger
             , ISchedulerFactory schedulerFactory            
-            , AviaTicketsViewModel viewModel)
+            , AviaTicketsViewModel viewModel            
+            , CitiesConverter converter)
         {
-            _logger = logger;   
-
-            _viewModel = viewModel;            
+            _logger = logger;  
+            _viewModel = viewModel;
+            _converter = converter;
 
             _scheduler = schedulerFactory.Create()
                                          .Do(GetCities);
@@ -45,13 +48,15 @@ namespace AviaTickets.Processes
         }
 
         public void GetCities()
-        { 
-            
-                var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
-                request.Run();
-                var response = request.Response;
-                var info = JsonConvert.DeserializeObject<List<Cities>>(response);            
-                _viewModel.Cities = info;
+        {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(_converter);
+
+            var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
+            request.Run();
+            var response = request.Response;
+            var info = JsonConvert.DeserializeObject<List<ICities>>(response, settings);            
+            _viewModel.Cities = info;
         }
     }
 }

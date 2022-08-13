@@ -1,4 +1,5 @@
 ﻿using AviaTickets.Abstractions;
+using AviaTickets.Converters;
 using AviaTickets.Models;
 using AviaTickets.ViewModel;
 using Microsoft.Extensions.Configuration;
@@ -17,9 +18,9 @@ namespace AviaTickets.Processes
         private ILogger<AviaTicketsGetWorkflow> _logger;
         private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
-        private AviaTicketsViewModel _viewModel;
+        private AviaTicketsViewModel _viewModel;       
+        private TicketConverter _converter;
         
-
 
         private string _token;
         private string _currency;
@@ -34,7 +35,8 @@ namespace AviaTickets.Processes
             , IConfigurationRoot configuration
             , ISchedulerFactory schedulerFactory
             , MainWindow mainWindow
-            , AviaTicketsViewModel viewModel)
+            , AviaTicketsViewModel viewModel            
+            , TicketConverter converter)
         {
             _logger = logger;
 
@@ -42,7 +44,9 @@ namespace AviaTickets.Processes
             _currency = configuration["Currency"];
 
             _mainWindow = mainWindow;
-            _viewModel = viewModel;
+            _viewModel = viewModel;            
+            _converter = converter;
+            
 
 
             _scheduler = schedulerFactory.Create()
@@ -118,7 +122,7 @@ namespace AviaTickets.Processes
             }
         }
 
-        public string GetCityCode(string mycity, List<Cities>? cities)
+        public string GetCityCode(string mycity, List<ICities>? cities)
         {
             if (cities != null)
             {
@@ -131,16 +135,18 @@ namespace AviaTickets.Processes
             return String.Empty;
         }
 
-        public Result? GetResult(string depCity, string arrCity, string currency, string depDate, string arrDate, string token, string direct)
+        public ITicket? GetResult(string depCity, string arrCity, string currency, string depDate, string arrDate, string token, string direct)
         {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(_converter);
             var request = new GetRequest($"https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin={depCity}&destination={arrCity}&currency={currency}&departure_at={depDate}&return_at={arrDate}&sorting=price&direct={direct}&limit=30&token={token}");
             request.Run();
             var response = request.Response;
-            var info = JsonConvert.DeserializeObject<Result>(response);
+            var info = JsonConvert.DeserializeObject<ITicket>(response , settings);
             return info;            
         }
 
-        public void CreateTickets(Result? info, bool oneWayTicket, bool returnTicket)
+        public void CreateTickets(ITicket? info, bool oneWayTicket, bool returnTicket)
         {
             if (info != null) info.Data.ForEach(item =>
             {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AviaTickets.Abstractions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AviaTickets.Models
 {
-    public class Result
+    public class Result : ITicket
     {
         [JsonProperty("success")]
         public bool Success { get; set; }

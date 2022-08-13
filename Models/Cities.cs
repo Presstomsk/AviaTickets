@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AviaTickets.Abstractions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AviaTickets.Models
 {
-    public class Cities
+    public class Cities : ICities
     {
         [JsonProperty("name")]
         public string City { get; set; }
