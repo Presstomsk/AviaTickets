@@ -23,7 +23,7 @@
  
  Models - модели данных
  
- Validation - абстракции(интерфейсы)
+ Validator - Валидатор
  
  Converters - конверторы json сериализатора
  
