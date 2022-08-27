@@ -24,8 +24,7 @@ namespace AviaTickets.ViewModel.Absractions
         DateTime SecondDateStart { get; set; }
         RelayCommand Search { get; }
         void OnPropertyChanged([CallerMemberName] string prop = "");
-        List<ICities>? Cities { get; set; }
-        List<TicketForm> Tickets { get; set; }
+        List<ICities>? Cities { get; set; }        
         void Tickets_OpenTicketLink(string link);
     }
 }

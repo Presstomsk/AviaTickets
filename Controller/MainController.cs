@@ -35,6 +35,7 @@ namespace AviaTickets.Controller
             _result = _serviceProvider.GetService<IInputDataValidationWorkflow>()?.Start();
             if (_result.Value.Item1) _result = _serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();
             if (_result.Value.Item1) _result = _serviceProvider.GetService<ITicketsCreatedWorkflow>()?.Start(_result.Value.Item2);
+            if (_result.Value.Item1) _serviceProvider.GetService<IAddTicketsIntoView>()?.Start(_result.Value.Item2);
             
         }
 

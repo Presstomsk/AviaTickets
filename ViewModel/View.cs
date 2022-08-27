@@ -8,7 +8,7 @@ using AviaTickets.ViewModel.Absractions;
 
 namespace AviaTickets.ViewModel
 {
-    public class View : IView , INotifyPropertyChanged
+    public class View : IView, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         public event TicketClickHandler? OpenTicketLink;
@@ -27,8 +27,7 @@ namespace AviaTickets.ViewModel
 
         private RelayCommand _search;      
 
-        public List<ICities>? Cities { get; set; }
-        public List<TicketForm> Tickets { get; set; }
+        public List<ICities>? Cities { get; set; }        
 
         public string DepCity
         {

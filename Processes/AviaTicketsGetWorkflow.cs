@@ -79,53 +79,38 @@ namespace AviaTickets.Processes
         }
 
         public void RequestTickets()
-        {
-            //_viewModel.Tickets = new List<TicketForm>();
+        {           
             var tickets = new List<ITicket>();
 
             if (_viewModel.OneWayTicket)
             {
                 var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, "", _token, "true");
-                if (result != default) tickets.Add(result);
-                //CreateTickets(result, _viewModel.OneWayTicket, false);
+                if (result != default) tickets.Add(result);                
             }
             if (_viewModel.ReturnTicket)
             {
                 var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, _arrDateFormat, _token, "true");
-                if (result != default) tickets.Add(result);
-                //CreateTickets(result, false, _viewModel.ReturnTicket);
+                if (result != default) tickets.Add(result);                
             }
 
             if (_viewModel.OneWayTicket && _viewModel.WayWithTransferTicket)
             {
                 var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, "", _token, "false");
-                if (result != default) tickets.Add(result);
-                //CreateTickets(result, _viewModel.OneWayTicket, false);
+                if (result != default) tickets.Add(result);                
             }
 
             if (_viewModel.ReturnTicket && _viewModel.WayWithTransferTicket)
             {
                 var result = GetResult(_depCityCode, _arrCityCode, _currency, _depDateFormat, _arrDateFormat, _token, "false");
-                if (result != default) tickets.Add(result);
-                //CreateTickets(result, false, _viewModel.ReturnTicket);
+                if (result != default) tickets.Add(result);               
             }
             List<Data> ticketData = new List<Data>();
             tickets.ForEach(x => { x.Data.ForEach(x => { ticketData.Add(x); }); });
             List<Data> distinct = ticketData.Distinct().ToList();
 
             _data = distinct;
-            //_viewModel.Tickets.Sort((a, b) => (a.DataContext as Tickets).ShortPrice.CompareTo((b.DataContext as Tickets).ShortPrice));
-        }
-
-       /* public void AddTicketsToMainWindow()
-        {
-            _mainWindow.Tickets.Children.Clear();          
-
-            for (int i = _viewModel.Tickets.Count - 1; i >= 0; i--)
-            {
-                _mainWindow.Tickets.Children.Insert(0, _viewModel.Tickets[i]);
-            }
-        }*/
+            _data.Sort((a, b) => a.Price.CompareTo(b.Price));
+        }       
 
         public string GetCityCode(string mycity, List<ICities>? cities)
         {
