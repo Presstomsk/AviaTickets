@@ -1,5 +1,4 @@
-﻿using AviaTickets.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 namespace AviaTickets.Models.Abstractions

@@ -3,11 +3,9 @@ using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 

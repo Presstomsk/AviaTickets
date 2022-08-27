@@ -1,8 +1,6 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics;
 
 namespace AviaTickets.Processes
@@ -26,17 +24,10 @@ namespace AviaTickets.Processes
         public (bool, object?) Start() { return (false, null); }
         public (bool, object?) Start(string link)
         {
-            _link = link;
-            try
-            {
-                _scheduler.Start();
-                return (true, null);
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError($"PROCESS: {WorkflowType} STATUS: {STATUS.ERROR}", ex.Message);
-                return (false, null);
-            }
+            _link = link;            
+            _scheduler.Start();
+            return (true, null);
+            
         }
         private void OpenLink()
         {

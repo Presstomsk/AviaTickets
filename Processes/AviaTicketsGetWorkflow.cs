@@ -4,8 +4,6 @@ using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
-using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -19,8 +17,7 @@ namespace AviaTickets.Processes
     public class AviaTicketsGetWorkflow : IAviaTicketsGetWorkflow
     {        
         private ILogger<AviaTicketsGetWorkflow> _logger;
-        private ISchedulerFactory _scheduler;
-        private MainWindow _mainWindow;
+        private ISchedulerFactory _scheduler;        
         private IView _viewModel;       
         private TicketConverter _converter;
         private List<Data> _data;
@@ -37,8 +34,7 @@ namespace AviaTickets.Processes
 
         public AviaTicketsGetWorkflow(ILogger<AviaTicketsGetWorkflow> logger
             , IConfigurationRoot configuration
-            , ISchedulerFactory schedulerFactory
-            , MainWindow mainWindow
+            , ISchedulerFactory schedulerFactory            
             , IView viewModel            
             , TicketConverter converter)
         {
@@ -46,12 +42,9 @@ namespace AviaTickets.Processes
 
             _token = configuration["Token"];
             _currency = configuration["Currency"];
-
-            _mainWindow = mainWindow;
+           
             _viewModel = viewModel;            
             _converter = converter;
-
-
 
             _scheduler = schedulerFactory.Create()
                             .Do(ChangeDateFormat)

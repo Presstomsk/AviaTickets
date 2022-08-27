@@ -4,7 +4,6 @@ using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Windows;
 
 namespace AviaTickets.Processes
