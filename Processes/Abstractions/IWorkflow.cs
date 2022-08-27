@@ -6,5 +6,6 @@ namespace AviaTickets.Processes.Abstractions
     {
         string WorkflowType { get; set; }
         public void Start();
+        
     }
 }

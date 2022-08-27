@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using AviaTickets.Controller;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
@@ -9,7 +9,7 @@ namespace AviaTickets.ViewModel
     {       
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
+        public event TicketClickHandler? OpenTicketLink;
         public string Link { get; set; }
 
         private string _depCity;
@@ -138,11 +138,7 @@ namespace AviaTickets.ViewModel
 
         private void OpenLink()
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = $"https://www.aviasales.ru{Link}",
-                UseShellExecute = true
-            });
+           OpenTicketLink?.Invoke(Link);          
         }
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")

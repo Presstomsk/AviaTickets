@@ -1,4 +1,5 @@
-﻿using AviaTickets.Models.Abstractions;
+﻿using AviaTickets.Controller;
+using AviaTickets.Models.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ namespace AviaTickets.ViewModel.Absractions
     public interface IView
     {
         event PropertyChangedEventHandler? PropertyChanged;
+        event TicketClickHandler? OpenTicketLink;
         event Action? SearchTickets;
         bool WithoutValidationErrors { get; set; }
         string DepCity { get; set; }
@@ -25,5 +27,6 @@ namespace AviaTickets.ViewModel.Absractions
         void OnPropertyChanged([CallerMemberName] string prop = "");
         List<ICities>? Cities { get; set; }
         List<TicketForm> Tickets { get; set; }
+        void Tickets_OpenTicketLink(string link);
     }
 }

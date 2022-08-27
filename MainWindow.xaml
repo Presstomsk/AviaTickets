@@ -44,7 +44,7 @@
             Grid.ColumnSpan="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
-            <StackPanel x:Name="Tickets" />
+            <StackPanel x:Name="Tickets"/>
         </ScrollViewer>
         
 

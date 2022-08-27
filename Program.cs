@@ -36,6 +36,7 @@ namespace AviaTickets
                                     .AddSingleton<ICitiesListCreatingWorkflow, CitiesListCreatingWorkflow>()
                                     .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
                                     .AddTransient<IAviaTicketsGetWorkflow, AviaTicketsGetWorkflow>() 
+                                    .AddTransient<IOpenTicketLinkWorkflow,OpenTicketLinkWorkflow>()
                                     .AddSingleton<ISchedulerFactory, SchedulerFactory>()
                                     .AddTransient<AbstractValidator<IView>, InputDataValidator>()
                                     .AddTransient<ICities, Cities>()

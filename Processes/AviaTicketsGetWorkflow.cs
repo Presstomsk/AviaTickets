@@ -157,6 +157,7 @@ namespace AviaTickets.Processes
                 var ticket = ticketForm.DataContext as Tickets;
                 if (ticket != default)
                 {
+                    ticket.OpenTicketLink += _viewModel.Tickets_OpenTicketLink;
                     ticket.Link = item.Link;
                     ticket.DepCity = item.Origin;
                     ticket.ArrCity = item.Destination;

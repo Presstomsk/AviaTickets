@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using AviaTickets.Controller;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.ViewModel.Absractions;
 
@@ -10,6 +11,7 @@ namespace AviaTickets.ViewModel
     public class View : IView , INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event TicketClickHandler? OpenTicketLink;
         public event Action? SearchTickets;       
 
         private string _depCity;
@@ -175,6 +177,11 @@ namespace AviaTickets.ViewModel
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public void Tickets_OpenTicketLink(string link)
+        {
+            OpenTicketLink?.Invoke(link);
         }
 
         

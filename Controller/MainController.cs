@@ -4,7 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 namespace AviaTickets.Controller
-{    
+{
+    public delegate void TicketClickHandler(string link);
     public class MainController 
     {
         private IView? _view;
@@ -23,13 +24,20 @@ namespace AviaTickets.Controller
             if (_view != default)
             {
                 _view.SearchTickets += View_SearchTickets;
-            }           
+                _view.OpenTicketLink += Tickets_OpenTicketLink;
+            }   
+            
         }
 
         private void View_SearchTickets()
         {            
             _serviceProvider.GetService<IInputDataValidationWorkflow>()?.Start();
             if (_view.WithoutValidationErrors) _serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();            
+        }
+
+        private void Tickets_OpenTicketLink(string link)
+        {
+            _serviceProvider.GetService<IOpenTicketLinkWorkflow>()?.Start(link);
         }
     }
 }
