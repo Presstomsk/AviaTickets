@@ -11,8 +11,7 @@ namespace AviaTickets.ViewModel.Absractions
     {
         event PropertyChangedEventHandler? PropertyChanged;
         event TicketClickHandler? OpenTicketLink;
-        event Action? SearchTickets;
-        bool WithoutValidationErrors { get; set; }
+        event Action? SearchTickets;        
         string DepCity { get; set; }
         string ArrCity { get; set; }
         DateTime DepDate { get; set; }

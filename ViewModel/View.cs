@@ -23,8 +23,7 @@ namespace AviaTickets.ViewModel
         private bool _returnTicket = false;
         private bool _wayWithTransferTicket = false;
         private DateTime _firstDateStart = DateTime.Now;
-        private DateTime _secondDateStart = DateTime.Now;
-        public bool WithoutValidationErrors { get; set; } = true;
+        private DateTime _secondDateStart = DateTime.Now;       
 
         private RelayCommand _search;      
 

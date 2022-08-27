@@ -35,19 +35,10 @@ namespace AviaTickets.Processes
                             
         }      
 
-        public void Start()
-        {
-            try
-            {
-                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.START}");
-                _scheduler.Start();
-                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.DONE}");
-            }
-            catch (Exception ex)
-            {                
-                _logger?.LogError($"PROCESS: {WorkflowType} STATUS: {STATUS.ERROR}", ex.Message);
-            }
-
+        public (bool,object?) Start()
+        {    
+            var result = _scheduler.Start();
+            return (result, null);
         }
 
         public void GetCities()

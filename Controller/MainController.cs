@@ -11,6 +11,7 @@ namespace AviaTickets.Controller
         private IView? _view;
         private MainWindow? _mainWindow;
         private ServiceProvider _serviceProvider;
+        private (bool, object?)? _result;
         public MainController (ServiceProvider serviceProvider)
         {
             _mainWindow = serviceProvider.GetService<MainWindow>();
@@ -31,13 +32,15 @@ namespace AviaTickets.Controller
 
         private void View_SearchTickets()
         {            
-            _serviceProvider.GetService<IInputDataValidationWorkflow>()?.Start();
-            if (_view.WithoutValidationErrors) _serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();            
+            _result = _serviceProvider.GetService<IInputDataValidationWorkflow>()?.Start();
+            if (_result.Value.Item1) _result = _serviceProvider.GetService<IAviaTicketsGetWorkflow>()?.Start();
+            if (_result.Value.Item1) _result = _serviceProvider.GetService<ITicketsCreatedWorkflow>()?.Start(_result.Value.Item2);
+            
         }
 
         private void Tickets_OpenTicketLink(string link)
         {
-            _serviceProvider.GetService<IOpenTicketLinkWorkflow>()?.Start(link);
+            if(_result.Value.Item1) _result = _serviceProvider.GetService<IOpenTicketLinkWorkflow>()?.Start(link);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Models.Abstractions;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 
@@ -16,7 +17,7 @@ namespace AviaTickets.Models
 
     }
 
-    public class Data
+    public class Data : IEquatable<Data>
     {
         [JsonProperty("origin")]
         public string Origin { get; set; }
@@ -49,6 +50,18 @@ namespace AviaTickets.Models
         [JsonProperty("link")]
         public string Link { get; set; }
 
-
+        public bool Equals(Data? other)
+        {
+            if (Object.ReferenceEquals(other, null)) return false;
+            if (Object.ReferenceEquals(this, other)) return true;
+            return Airline.Equals(other.Airline) && Link.Equals(other.Link);
+        }
+        public override int GetHashCode()
+        {
+            
+            int hashAirline = Airline == null ? 0 : Airline.GetHashCode();            
+            int hashLink = Link == null ? 0 : Link.GetHashCode();            
+            return hashAirline ^ hashLink;
+        }
     }
 }

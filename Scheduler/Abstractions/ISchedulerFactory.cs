@@ -7,6 +7,6 @@ namespace AviaTickets.Scheduler.Abstractions
     {
         ISchedulerFactory Create();
         ISchedulerFactory Do(Action action);
-        void Start();        
+        bool Start();        
     }
 }

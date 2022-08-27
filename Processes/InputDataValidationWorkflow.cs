@@ -15,6 +15,7 @@ namespace AviaTickets.Processes
         private ISchedulerFactory _scheduler;
         private AbstractValidator<IView> _validator;
         private IView _view;
+        private bool _result = false;
 
         public string WorkflowType { get; set; } = "INPUT_DATA_VALIDATION";
         public InputDataValidationWorkflow(ILogger<InputDataValidationWorkflow> logger
@@ -30,18 +31,10 @@ namespace AviaTickets.Processes
                                          .Do(Validate);
         }
 
-        public void Start()
+        public (bool, object?) Start()
         {
-            try
-            {
-                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.START}");
-                _scheduler.Start();
-                _logger.LogInformation($"PROCESS: {WorkflowType} STATUS: {STATUS.DONE}");
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError($"PROCESS: {WorkflowType} STATUS: {STATUS.ERROR}", ex.Message);
-            }
+            _scheduler.Start();
+            return (_result, null);
         }
 
         private void Validate()
@@ -50,8 +43,7 @@ namespace AviaTickets.Processes
 
             if (result.IsValid)
             {
-                _logger?.LogError($"RESULT_OF_VALIDATION_INPUT_DATA , STATUS: {STATUS.DONE}");
-                _view.WithoutValidationErrors = true;
+                _result = true;
                 return;
             }
 
@@ -59,7 +51,7 @@ namespace AviaTickets.Processes
             {
                 _logger?.LogError($"RESULT_OF_VALIDATION_INPUT_DATA , STATUS: {STATUS.ERROR}, {error.ErrorMessage}");
                 MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);
-                _view.WithoutValidationErrors = false;
+                _result = false;
                 return;
             }
 
