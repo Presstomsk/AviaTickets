@@ -1,10 +1,11 @@
-﻿using AviaTickets.Converters.ParentClasses;
+﻿using AviaTickets.Converters;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.AllProcessesList;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using AviaTickets.ViewModel;
+using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace AviaTickets.Processes
         private ILogger<AviaTicketsGetWorkflow> _logger;
         private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
-        private AviaTicketsViewModel _viewModel;       
+        private IView _viewModel;       
         private TicketConverter _converter;
         
 
@@ -36,7 +37,7 @@ namespace AviaTickets.Processes
             , IConfigurationRoot configuration
             , ISchedulerFactory schedulerFactory
             , MainWindow mainWindow
-            , AviaTicketsViewModel viewModel            
+            , IView viewModel            
             , TicketConverter converter)
         {
             _logger = logger;
@@ -110,7 +111,7 @@ namespace AviaTickets.Processes
                 CreateTickets(result, false, _viewModel.ReturnTicket);
             }
 
-            _viewModel.Tickets.Sort((a, b) => (a.DataContext as TicketUserControl).ShortPrice.CompareTo((b.DataContext as TicketUserControl).ShortPrice));
+            _viewModel.Tickets.Sort((a, b) => (a.DataContext as Tickets).ShortPrice.CompareTo((b.DataContext as Tickets).ShortPrice));
         }
 
         public void AddTicketsToMainWindow()
@@ -152,7 +153,8 @@ namespace AviaTickets.Processes
             if (info != null) info.Data.ForEach(item =>
             {
                 var ticketForm = new TicketForm();
-                var ticket = (ticketForm.DataContext != null) ? ticketForm.DataContext as TicketUserControl : default;
+                ticketForm.DataContext = new Tickets();
+                var ticket = ticketForm.DataContext as Tickets;
                 if (ticket != default)
                 {
                     ticket.Link = item.Link;

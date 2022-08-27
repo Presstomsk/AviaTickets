@@ -13,8 +13,7 @@ namespace AviaTickets
 
         public TicketForm()
         {
-            InitializeComponent();
-            DataContext = new TicketUserControl();
+            InitializeComponent();            
         }
         
 

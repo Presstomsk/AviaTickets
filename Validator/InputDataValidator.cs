@@ -1,13 +1,12 @@
-﻿using AviaTickets.ViewModel;
+﻿using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
-using System;
 
 namespace AviaTickets.Validator
 {
-    public class InputDataValidator : AbstractValidator<AviaTicketsViewModel>
+    public class InputDataValidator : AbstractValidator<IView>
     {
-        private AviaTicketsViewModel _view;
-        public InputDataValidator(AviaTicketsViewModel view)
+        private IView _view;
+        public InputDataValidator(IView view)
         {
             _view = view;
 

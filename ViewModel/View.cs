@@ -1,33 +1,17 @@
-﻿using AviaTickets.Processes;
-using AviaTickets.Scheduler;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using AviaTickets.Models;
-using AviaTickets.Converters;
 using AviaTickets.Models.Abstractions;
-using AviaTickets.Dispatcher.Abstractions;
-using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Converters.ParentClasses;
-using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.AllProcessesList;
-using FluentValidation;
-using AviaTickets.Validator;
+using AviaTickets.ViewModel.Absractions;
 
 namespace AviaTickets.ViewModel
 {
-    public class AviaTicketsViewModel : INotifyPropertyChanged
+    public class View : IView , INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        private ServiceProvider _serviceProvider;
-        private ILogger<AviaTicketsViewModel> _logger;
+        public event Action? SearchTickets;       
 
-        
         private string _depCity;
         private string _arrCity;
         private DateTime _depDate = DateTime.Now;
@@ -182,41 +166,10 @@ namespace AviaTickets.ViewModel
             {
                 return _search ?? (_search = new RelayCommand(obj => Find()));
             }
-        }   
-
-
-        public AviaTicketsViewModel(MainWindow mainWindow)       
-        {
-            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            
-            var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-            
-            _serviceProvider = new ServiceCollection()
-                                    .AddSingleton(mainWindow)
-                                    .AddSingleton(this)
-                                    .AddSingleton(configuration)
-                                    .AddLogging((config)=>config.AddSerilog(serilog))
-                                    .AddTransient<IDispatcher, Dispatcher.Dispatcher>()
-                                    .AddSingleton<ISchedulerFactory, SchedulerFactory>()
-                                    .AddTransient<AbstractValidator<AviaTicketsViewModel>,InputDataValidator>()
-                                    .AddTransient<ICities,Models.Cities>()
-                                    .AddTransient<ITicket,Result>()
-                                    .AddSingleton<CitiesConverter, Converters.Cities>()
-                                    .AddSingleton<TicketConverter,Tickets>()                                    
-                                    .AddSingleton<ICitiesListCreatingWorkflow,CitiesListCreatingWorkflow>() 
-                                    .AddTransient<IInputDataValidationWorkflow,InputDataValidationWorkflow>()
-                                    .AddTransient<IAviaTicketsGetWorkflow,AviaTicketsGetWorkflow>()
-                                    .BuildServiceProvider();
-
-            _logger = _serviceProvider.GetService<ILoggerFactory>().CreateLogger<AviaTicketsViewModel>();
-            _logger.LogInformation($"APPLICATION {STATUS.START}");
-
-            _serviceProvider.GetService<IDispatcher>()?.Start(_serviceProvider, ProcessType.CITIES_LIST_CREATING);            
-        }
-
+        } 
         public void Find()
         {
-            _serviceProvider.GetService<IDispatcher>()?.Start(_serviceProvider, ProcessType.AVIA_TICKETS_GET);            
+            SearchTickets?.Invoke();      
         }
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

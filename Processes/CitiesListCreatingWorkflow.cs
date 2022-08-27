@@ -1,10 +1,10 @@
-﻿using AviaTickets.Converters.ParentClasses;
+﻿using AviaTickets.Converters;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.AllProcessesList;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.ViewModel;
+using AviaTickets.Statuses;
+using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -17,13 +17,13 @@ namespace AviaTickets.Processes
     {
         private ILogger<CitiesListCreatingWorkflow> _logger;
         private ISchedulerFactory _scheduler;        
-        private AviaTicketsViewModel _viewModel;        
+        private IView _viewModel;        
         private CitiesConverter _converter;
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING";        
 
         public CitiesListCreatingWorkflow(ILogger<CitiesListCreatingWorkflow> logger
             , ISchedulerFactory schedulerFactory            
-            , AviaTicketsViewModel viewModel            
+            , IView viewModel            
             , CitiesConverter converter)
         {
             _logger = logger;  

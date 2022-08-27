@@ -11,9 +11,6 @@ namespace AviaTickets
         public MainWindow()
         {
             InitializeComponent();
-
-            DataContext = new AviaTicketsViewModel(this);
-
         }
 
 

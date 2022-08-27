@@ -1,23 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿using AviaTickets.Models.Abstractions;
+using Newtonsoft.Json;
 using System;
 
-namespace AviaTickets.Converters.ParentClasses
+namespace AviaTickets.Converters
 {
     public class CitiesConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            throw new NotImplementedException();
+            return (objectType == typeof(ICities));
         }
 
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            return serializer.Deserialize(reader, typeof(Models.Cities));
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            serializer.Serialize(writer, value, typeof(Models.Cities));
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using AviaTickets.Processes.AllProcessesList;
-using AviaTickets.Scheduler.Abstractions;
+﻿using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
