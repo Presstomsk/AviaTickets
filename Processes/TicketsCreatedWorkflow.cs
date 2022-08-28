@@ -32,7 +32,7 @@ namespace AviaTickets.Processes
 
             _currency = configuration["Currency"];
 
-            _scheduler = schedulerFactory.Create()
+            _scheduler = schedulerFactory.Create(WorkflowType)
                                         .Do(CreateTickets);
         }
         public (bool, object?) Start(object? data)

@@ -12,15 +12,17 @@ namespace AviaTickets.Scheduler
         private Queue<Action>? _scheduler;
         private ILogger<ISchedulerFactory> _logger;
         private bool _exelent = false;
+        private string _procName;
         public SchedulerFactory(ILogger<ISchedulerFactory> logger)
         {
             _logger = logger;
         }
 
-        public ISchedulerFactory Create()
+        public ISchedulerFactory Create(string procName)
         {
             Clear();
-           _scheduler = new Queue<Action>();
+            _scheduler = new Queue<Action>();
+            _procName = procName;
             return this;
         }
 
@@ -38,12 +40,12 @@ namespace AviaTickets.Scheduler
                 try
                 {                   
                     _scheduler?.Peek().Invoke();
-                    _logger.LogInformation($"STEP[{step++}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}");
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step++}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}");
                     _exelent = true;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"STEP[{step}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR}", ex.Message);
+                    _logger.LogError($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step}] : {_scheduler?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR} , {ex.Message}");
                     _exelent = false;
                 }
             }

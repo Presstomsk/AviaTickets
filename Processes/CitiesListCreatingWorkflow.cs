@@ -28,7 +28,7 @@ namespace AviaTickets.Processes
             _viewModel = viewModel;
             _converter = converter;
 
-            _scheduler = schedulerFactory.Create()
+            _scheduler = schedulerFactory.Create(WorkflowType)
                                          .Do(GetCities);
                             
         }      

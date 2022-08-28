@@ -14,7 +14,7 @@ namespace AviaTickets.Processes
         private ISchedulerFactory _scheduler;
         private AbstractValidator<IView> _validator;
         private IView _view;
-        private bool _result = false;
+        
 
         public string WorkflowType { get; set; } = "INPUT_DATA_VALIDATION";
         public InputDataValidationWorkflow(ILogger<InputDataValidationWorkflow> logger
@@ -26,32 +26,26 @@ namespace AviaTickets.Processes
             _validator = validator;
             _view = view;
 
-            _scheduler = schedulerFactory.Create()
+            _scheduler = schedulerFactory.Create(WorkflowType)
                                          .Do(Validate);
         }
 
         public (bool, object?) Start()
         {
-            _scheduler.Start();
-            return (_result, null);
+            var result = _scheduler.Start();
+            return (result, null);
         }
 
         private void Validate()
         {
             var result = _validator.Validate(_view);
 
-            if (result.IsValid)
-            {
-                _result = true;
-                return;
-            }
+            if (result.IsValid) return;
 
             foreach (var error in result.Errors)
-            {
-                _logger?.LogError($"RESULT_OF_VALIDATION_INPUT_DATA , STATUS: {STATUS.ERROR}, {error.ErrorMessage}");
+            {                
                 MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);
-                _result = false;
-                return;
+                throw new System.Exception(error.ErrorMessage);               
             }
 
         }

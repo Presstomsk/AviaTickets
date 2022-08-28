@@ -16,7 +16,7 @@ namespace AviaTickets.Processes
         { 
             _logger = logger;
 
-            _scheduler = schedulerFactory.Create()
+            _scheduler = schedulerFactory.Create(WorkflowType)
                             .Do(OpenLink);
                            
         }        
