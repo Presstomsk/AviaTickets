@@ -4,7 +4,6 @@ using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel.Absractions;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -12,19 +11,16 @@ using System.Collections.Generic;
 namespace AviaTickets.Processes
 {
     public class CitiesListCreatingWorkflow : ICitiesListCreatingWorkflow
-    {
-        private ILogger<CitiesListCreatingWorkflow> _logger;
+    {        
         private ISchedulerFactory _scheduler;        
         private IView _viewModel;        
         private CitiesConverter _converter;
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING";        
 
-        public CitiesListCreatingWorkflow(ILogger<CitiesListCreatingWorkflow> logger
-            , ISchedulerFactory schedulerFactory            
-            , IView viewModel            
-            , CitiesConverter converter)
-        {
-            _logger = logger;  
+        public CitiesListCreatingWorkflow(ISchedulerFactory schedulerFactory            
+                                          , IView viewModel            
+                                          , CitiesConverter converter)
+        {           
             _viewModel = viewModel;
             _converter = converter;
 

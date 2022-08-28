@@ -1,28 +1,23 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
-using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace AviaTickets.Processes
 {
     public class InputDataValidationWorkflow : IInputDataValidationWorkflow
-    {
-        private ILogger<InputDataValidationWorkflow> _logger;
+    {        
         private ISchedulerFactory _scheduler;
         private AbstractValidator<IView> _validator;
         private IView _view;
         
 
         public string WorkflowType { get; set; } = "INPUT_DATA_VALIDATION";
-        public InputDataValidationWorkflow(ILogger<InputDataValidationWorkflow> logger
-                                           , ISchedulerFactory schedulerFactory
+        public InputDataValidationWorkflow( ISchedulerFactory schedulerFactory
                                            , AbstractValidator<IView> validator
                                            , IView view)
-        {
-            _logger = logger;           
+        {                    
             _validator = validator;
             _view = view;
 

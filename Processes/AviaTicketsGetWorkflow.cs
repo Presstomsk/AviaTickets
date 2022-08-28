@@ -6,7 +6,6 @@ using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,8 +14,7 @@ using System.Linq;
 namespace AviaTickets.Processes
 {
     public class AviaTicketsGetWorkflow : IAviaTicketsGetWorkflow
-    {        
-        private ILogger<AviaTicketsGetWorkflow> _logger;
+    {   
         private ISchedulerFactory _scheduler;        
         private IView _viewModel;       
         private TicketConverter _converter;
@@ -32,13 +30,11 @@ namespace AviaTickets.Processes
 
         public string WorkflowType { get; set; } = "AVIA_TICKETS_GET";
 
-        public AviaTicketsGetWorkflow(ILogger<AviaTicketsGetWorkflow> logger
-            , IConfigurationRoot configuration
-            , ISchedulerFactory schedulerFactory            
-            , IView viewModel            
-            , TicketConverter converter)
-        {
-            _logger = logger;
+        public AviaTicketsGetWorkflow(IConfigurationRoot configuration
+                                     , ISchedulerFactory schedulerFactory            
+                                     , IView viewModel            
+                                     , TicketConverter converter)
+        {           
 
             _token = configuration["Token"];
             _currency = configuration["Currency"];

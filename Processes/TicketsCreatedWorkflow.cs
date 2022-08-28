@@ -4,14 +4,12 @@ using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 namespace AviaTickets.Processes
 {
     public class TicketsCreatedWorkflow : ITicketsCreatedWorkflow
-    {
-        private ILogger<TicketsCreatedWorkflow> _logger;
+    {        
         private ISchedulerFactory _scheduler;
         private IView _viewModel;
         private List<Data>? _data;
@@ -20,12 +18,10 @@ namespace AviaTickets.Processes
         private string _currency;
 
         public string WorkflowType { get; set; } = "TICKETS_CREATED_WORKFLOW";
-        public TicketsCreatedWorkflow(ILogger<TicketsCreatedWorkflow> logger
-                                     , IConfigurationRoot configuration
+        public TicketsCreatedWorkflow(IConfigurationRoot configuration
                                      , ISchedulerFactory schedulerFactory
                                      , IView viewModel)
-        {
-            _logger = logger;
+        {           
             _viewModel = viewModel;
 
             _tickets = new List<TicketForm>();

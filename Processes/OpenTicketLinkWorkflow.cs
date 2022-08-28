@@ -1,24 +1,18 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace AviaTickets.Processes
 {
     internal class OpenTicketLinkWorkflow : IOpenTicketLinkWorkflow
-    {
-        private ILogger<OpenTicketLinkWorkflow> _logger;
+    {        
         private ISchedulerFactory _scheduler;
         private string _link;
         public string WorkflowType { get; set; } = "OPEN_TICKET_LINK";
-        public OpenTicketLinkWorkflow(ILogger<OpenTicketLinkWorkflow> logger            
-            , ISchedulerFactory schedulerFactory)
-        { 
-            _logger = logger;
-
+        public OpenTicketLinkWorkflow(ISchedulerFactory schedulerFactory)
+        {
             _scheduler = schedulerFactory.Create(WorkflowType)
-                            .Do(OpenLink);
-                           
+                                         .Do(OpenLink);                           
         }        
 
         public (bool, object?) Start() { return (false, null); }

@@ -1,13 +1,11 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 namespace AviaTickets.Processes
 {
     public class AddTicketsIntoView : IAddTicketsIntoView
-    {
-        private ILogger<AddTicketsIntoView> _logger;
+    {        
         private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
 
@@ -15,11 +13,9 @@ namespace AviaTickets.Processes
 
         public string WorkflowType { get; set; } = "ADD_TICKETS_INTO_VIEW";
 
-        public AddTicketsIntoView(ILogger<AddTicketsIntoView> logger                                     
-                                 , ISchedulerFactory schedulerFactory
+        public AddTicketsIntoView(ISchedulerFactory schedulerFactory
                                  , MainWindow mainWindow)
-        {
-            _logger = logger;
+        {            
             _mainWindow = mainWindow;
             _scheduler = schedulerFactory.Create(WorkflowType)
                                          .Do(AddTicketsToMainWindow);
