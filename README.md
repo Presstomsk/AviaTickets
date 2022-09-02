@@ -15,6 +15,8 @@
  
  Resources - ресурсы (*.jpg)
  
+ Splash - Splash Window
+ 
  ViewModel - модель представления.
  
  Controller - контроллер
