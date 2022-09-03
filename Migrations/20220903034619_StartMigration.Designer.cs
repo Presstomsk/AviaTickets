@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AviaTickets.Migrations
 {
     [DbContext(typeof(MainContext))]
-    [Migration("20220903034259_Start1Migration")]
-    partial class Start1Migration
+    [Migration("20220903034619_StartMigration")]
+    partial class StartMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

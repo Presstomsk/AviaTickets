@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AviaTickets.Migrations
 {
-    public partial class Start1Migration : Migration
+    public partial class StartMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
