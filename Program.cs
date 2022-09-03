@@ -1,6 +1,7 @@
 ﻿using AviaTickets.Controller;
 using AviaTickets.Converters;
 using AviaTickets.DB;
+using AviaTickets.DB.Abstractions;
 using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
@@ -41,6 +42,7 @@ namespace AviaTickets
                                             .AddSingleton<IView, View>()
                                             .AddSingleton<CitiesConverter>()
                                             .AddSingleton<TicketConverter>()
+                                            .AddSingleton<IContextFactory,ContextFactory>()
                                             .AddSingleton<ICitiesListCreatingWorkflow, CitiesListCreatingWorkflow>()
                                             .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
                                             .AddTransient<IAviaTicketsGetWorkflow, AviaTicketsGetWorkflow>()

@@ -15,7 +15,7 @@ namespace AviaTickets.Processes
         private ISchedulerFactory _scheduler;        
         private IView _viewModel;        
         private CitiesConverter _converter;
-        public string WorkflowType { get; set; } = "CITIES_LIST_CREATING";        
+        public string WorkflowType { get; set; } = "CITIES_LIST_CREATING_WORKFLOW";        
 
         public CitiesListCreatingWorkflow(ISchedulerFactory schedulerFactory            
                                           , IView viewModel            
