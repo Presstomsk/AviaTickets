@@ -11,6 +11,8 @@
  
  appsettings.json - файл первоначальных настроек приложения
  
+ mydb.db - БД SQLite
+ 
  Program.cs - настройки приложения
  
  Resources - ресурсы (*.jpg)
