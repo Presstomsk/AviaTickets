@@ -15,6 +15,10 @@
  
  Resources - ресурсы (*.jpg)
  
+ DB - контекст данных
+ 
+ Migrations - миграции
+ 
  Splash - Splash Window
  
  ViewModel - модель представления.
