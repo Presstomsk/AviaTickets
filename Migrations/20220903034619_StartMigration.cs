@@ -7,6 +7,8 @@ namespace AviaTickets.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(name: "Cities"); //добавлено вручную
+
             migrationBuilder.CreateTable(
                 name: "Cities",
                 columns: table => new

@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace AviaTickets.Processes
 {
-    public class AddTicketsIntoView : IAddTicketsIntoView
+    public class AddTicketsIntoViewWorkflow : IAddTicketsIntoViewWorkflow
     {        
         private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
 
         private List<TicketForm>? _tickets;
 
-        public string WorkflowType { get; set; } = "ADD_TICKETS_INTO_VIEW";
+        public string WorkflowType { get; set; } = "ADD_TICKETS_INTO_VIEW_WORKFLOW";
 
-        public AddTicketsIntoView(ISchedulerFactory schedulerFactory
+        public AddTicketsIntoViewWorkflow(ISchedulerFactory schedulerFactory
                                  , MainWindow mainWindow)
         {            
             _mainWindow = mainWindow;
