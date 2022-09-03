@@ -20,8 +20,8 @@ namespace AviaTickets.Controller
             _mainWindow?.Show();
 
             _serviceProvider = serviceProvider;
-            _serviceProvider.GetService<ICitiesDatabaseUpdateWorkflow>()?.Start();
-            _serviceProvider.GetService<ICitiesListCreatingWorkflow>()?.Start();
+            _result = _serviceProvider.GetService<ICitiesDatabaseUpdateWorkflow>()?.Start();
+            if (_result.Value.Item1) _serviceProvider.GetService<ICitiesListCreatingWorkflow>()?.Start();
 
             if (_view != default)
             {

@@ -1,28 +1,27 @@
 ﻿using AviaTickets.Converters;
+using AviaTickets.DB.Abstractions;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel.Absractions;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
+using System.Linq;
 
 namespace AviaTickets.Processes
 {
     public class CitiesListCreatingWorkflow : ICitiesListCreatingWorkflow
-    {        
+    {
+        private IContextFactory _contextFactory;
         private ISchedulerFactory _scheduler;        
-        private IView _viewModel;        
-        private CitiesConverter _converter;
+        private IView _viewModel;       
+        
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING_WORKFLOW";        
 
         public CitiesListCreatingWorkflow(ISchedulerFactory schedulerFactory            
-                                          , IView viewModel            
-                                          , CitiesConverter converter)
+                                          , IView viewModel                                       
+                                          , IContextFactory contextFactory)
         {           
-            _viewModel = viewModel;
-            _converter = converter;
+            _viewModel = viewModel;            
+            _contextFactory = contextFactory;
 
             _scheduler = schedulerFactory.Create(WorkflowType)
                                          .Do(GetCities);
@@ -37,14 +36,10 @@ namespace AviaTickets.Processes
 
         public void GetCities()
         {
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(_converter);
-
-            var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
-            request.Run();
-            var response = request.Response;
-            var info = JsonConvert.DeserializeObject<List<ICities>>(response, settings);            
-            _viewModel.Cities = info;
+            using (var context = _contextFactory.CreateContext())
+            {
+                _viewModel.Cities = context.Cities.Select(x => x).ToList<ICities>();
+            }
         }
     }
 }
