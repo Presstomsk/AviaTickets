@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Controller;
 using AviaTickets.Converters;
+using AviaTickets.DB;
 using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
@@ -11,6 +12,7 @@ using AviaTickets.Validator;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -32,6 +34,8 @@ namespace AviaTickets
 
                     var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
 
+                    var connString = configuration.GetConnectionString("MainDb");
+
                     _serviceProvider = new ServiceCollection()
                                             .AddSingleton(configuration)
                                             .AddLogging((config) => config.AddSerilog(serilog))
@@ -50,6 +54,12 @@ namespace AviaTickets
                                             .AddTransient<ICities, Cities>()
                                             .AddTransient<ITicket, Result>()
                                             .BuildServiceProvider();
+
+                    using (var db = new MainContext()) 
+                    { 
+                        db.ConnString = connString;
+                        db.Database.Migrate(); 
+                    }
 
                     new MainController(_serviceProvider);
                 }
