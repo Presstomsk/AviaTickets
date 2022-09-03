@@ -28,7 +28,7 @@ namespace AviaTickets.Processes
         private string _depDateFormat;
         private string _arrDateFormat;       
 
-        public string WorkflowType { get; set; } = "AVIA_TICKETS_GET";
+        public string WorkflowType { get; set; } = "AVIA_TICKETS_GET_WORKFLOW";
 
         public AviaTicketsGetWorkflow(IConfigurationRoot configuration
                                      , ISchedulerFactory schedulerFactory            

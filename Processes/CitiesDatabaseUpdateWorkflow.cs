@@ -6,6 +6,7 @@ using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace AviaTickets.Processes
 {
     public class CitiesDatabaseUpdateWorkflow : ICitiesDatabaseUpdateWorkflow
     {
+        private ILogger<ICitiesDatabaseUpdateWorkflow> _logger;
         private IContextFactory _contextFactory;
         private ISchedulerFactory _scheduler;
         private CitiesConverter _converter;
@@ -25,10 +27,12 @@ namespace AviaTickets.Processes
 
         public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
                                             , ISchedulerFactory schedulerFactory
-                                            , CitiesConverter converter)
+                                            , CitiesConverter converter
+                                            , ILogger<ICitiesDatabaseUpdateWorkflow> logger)
         {
             _contextFactory = contextFactory;
             _converter = converter;
+            _logger = logger;
 
             _scheduler = schedulerFactory.Create(WorkflowType)
                                          .Do(GetUpdateDBDate)
@@ -50,6 +54,7 @@ namespace AviaTickets.Processes
                 if (city.Count > 0)
                 {
                     _updateDate = city.OrderBy(x => x.UpdateDate).First().UpdateDate;
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[0] : GetUpdateDBDate, Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
                 }
             }
         }
@@ -57,6 +62,7 @@ namespace AviaTickets.Processes
         public void NeedUpdate()
         {
             _needUpdate = (_updateDate == default) ? true : (-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays) > 7);
+            if (_updateDate != default) _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : NeedUpdate, Последнее обновление было {-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays)} дней назад");
         }
 
         public async void CleareDB()
@@ -66,6 +72,7 @@ namespace AviaTickets.Processes
                 using (var context = _contextFactory.CreateContext())
                 {
                     context.Cities.Select(x => x).ToList().ForEach(x => { context.Remove(x); });
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[2] : CleareDB, База данных очищена - {context.Cities.Count()} элементов");
                     await context.SaveChangesAsync();
                 }
             }
@@ -103,6 +110,8 @@ namespace AviaTickets.Processes
                             }
                         }
                     });
+
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : UpdateDB, База данных обновлена - {info?.Count} элементов");
                 }
             };
         }
