@@ -55,9 +55,10 @@ namespace AviaTickets
                                             .BuildServiceProvider();
 
                     using (var db = new MainContext()) 
-                    { 
-                        db.Database.Migrate(); 
+                    {                        
+                        db.Database.Migrate();
                     }
+
                     new MainController(_serviceProvider);
                 }
             }
