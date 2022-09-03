@@ -32,9 +32,7 @@ namespace AviaTickets
                 {
                     var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-
-                    var connString = configuration.GetConnectionString("MainDb");
+                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();                   
 
                     _serviceProvider = new ServiceCollection()
                                             .AddSingleton(configuration)
@@ -57,10 +55,8 @@ namespace AviaTickets
 
                     using (var db = new MainContext()) 
                     { 
-                        db.ConnString = connString;
                         db.Database.Migrate(); 
                     }
-
                     new MainController(_serviceProvider);
                 }
             }
