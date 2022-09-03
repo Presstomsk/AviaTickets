@@ -49,10 +49,10 @@ namespace AviaTickets.Processes
                             
         }
 
-        public (bool, object?) Start()
+        public Statuses.Result Start()
         {
             var result = _scheduler.Start();
-            return (result, _data);
+            return new Statuses.Result{ Success = result, Content = _data };
         }
 
         public void ChangeDateFormat()

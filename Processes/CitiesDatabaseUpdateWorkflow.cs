@@ -37,10 +37,10 @@ namespace AviaTickets.Processes
                                          .Do(UpdateDB);
         }
 
-        public (bool, object?) Start()
+        public Statuses.Result Start()
         {
             var result = _scheduler.Start();
-            return (result, null);
+            return  new Statuses.Result { Success = result, Content = null }; 
         }
         public void GetUpdateDBDate()
         {

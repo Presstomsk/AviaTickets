@@ -3,6 +3,7 @@ using AviaTickets.DB.Abstractions;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using System.Linq;
 
@@ -28,10 +29,10 @@ namespace AviaTickets.Processes
                             
         }      
 
-        public (bool,object?) Start()
+        public Result Start()
         {    
             var result = _scheduler.Start();
-            return (result, null);
+            return new Result { Success = result, Content = null };
         }
 
         public void GetCities()

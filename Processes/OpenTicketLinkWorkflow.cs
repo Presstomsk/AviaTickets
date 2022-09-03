@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using System.Diagnostics;
 
 namespace AviaTickets.Processes
@@ -15,13 +16,13 @@ namespace AviaTickets.Processes
                                          .Do(OpenLink);                           
         }        
 
-        public (bool, object?) Start() { return (false, null); }
-        public (bool, object?) Start(string link)
+        public Result Start() {  return new Statuses.Result{ Success = false, Content = null }; }
+        public Result Start(string link)
         {
             _link = link;            
             _scheduler.Start();
-            return (true, null);
-            
+            return new Statuses.Result { Success = true, Content = null };
+
         }
         private void OpenLink()
         {

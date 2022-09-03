@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using System.Collections.Generic;
 
 namespace AviaTickets.Processes
@@ -21,15 +22,15 @@ namespace AviaTickets.Processes
                                          .Do(AddTicketsToMainWindow);
         }
 
-        public (bool, object?) Start(object? data)
+        public Result Start(object? data)
         {
             _tickets = (data != null) ? data as List<TicketForm> : new List<TicketForm>();
             var result = _scheduler.Start();
-            return (result, null);
+            return new Result { Success = result, Content = null };
         }
-        public (bool, object?) Start()
+        public Result Start()
         {
-            return (false, null);
+            return new Result { Success = false, Content = null };
         }
 
         private void AddTicketsToMainWindow()

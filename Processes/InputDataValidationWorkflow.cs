@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Processes.Abstractions;
 using AviaTickets.Scheduler.Abstractions;
+using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
 using System.Windows;
@@ -25,10 +26,10 @@ namespace AviaTickets.Processes
                                          .Do(Validate);
         }
 
-        public (bool, object?) Start()
+        public Result Start()
         {
             var result = _scheduler.Start();
-            return (result, null);
+            return new Result { Success = result, Content = null };
         }
 
         private void Validate()

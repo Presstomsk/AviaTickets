@@ -31,16 +31,16 @@ namespace AviaTickets.Processes
             _scheduler = schedulerFactory.Create(WorkflowType)
                                         .Do(CreateTickets);
         }
-        public (bool, object?) Start(object? data)
+        public Statuses.Result Start(object? data)
         {
             _data = (data != null) ? data as List<Data> : new List<Data>();
             var result = _scheduler.Start();
-            return (result, _tickets);
+            return new Statuses.Result { Success = result, Content = _tickets };
         }
 
-        public (bool, object?) Start()
+        public Statuses.Result Start()
         {
-            return (false, null);
+            return new Statuses.Result { Success = false, Content = null };
         }
 
          private void CreateTickets()
