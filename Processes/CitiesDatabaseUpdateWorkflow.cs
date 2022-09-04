@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AviaTickets.Processes
 {
@@ -84,11 +85,11 @@ namespace AviaTickets.Processes
             {
                 var settings = new JsonSerializerSettings();
                 settings.Converters.Add(_converter);
-
+                
                 var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
                 request.Run();
                 var response = request.Response;
-                var info = JsonConvert.DeserializeObject<List<Cities>>(response, settings);
+                var info = JsonConvert.DeserializeObject<List<Cities>>(response, settings);                               
 
                 using (var context = _contextFactory.CreateContext())
                 {
@@ -98,7 +99,8 @@ namespace AviaTickets.Processes
                         using (var transaction = context.Database.BeginTransaction())
                         {
                             try
-                            {                              
+                            { 
+                                
                                 await context.BulkInsertAsync(info);
 
                                 transaction.Commit();

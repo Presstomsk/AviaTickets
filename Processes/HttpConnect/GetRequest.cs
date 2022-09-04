@@ -6,7 +6,7 @@ namespace AviaTickets.Processes.HttpConnect
 {
     public class GetRequest
     {
-
+        
         HttpWebRequest _request;
         string _address;
 
@@ -15,15 +15,16 @@ namespace AviaTickets.Processes.HttpConnect
         public GetRequest(string address)
         {
             _address = address;
+                   
         }
 
-        public void Run()
+        public async void Run()
         {
             _request = (HttpWebRequest)WebRequest.Create(_address);
-            _request.Method = "Get";            
+            _request.Method = "Get";
             HttpWebResponse response = (HttpWebResponse)_request.GetResponse();
             var stream = response.GetResponseStream();
-            if (stream != null) Response = new StreamReader(stream).ReadToEnd();
+            if (stream != null) Response = new StreamReader(stream).ReadToEndAsync().Result;
         }
     }
 
