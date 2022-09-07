@@ -48,7 +48,10 @@
 Зависимости между абстракциями и классами устанавливаются через DI контейнеры Microsoft.Extensions.DependencyInjection
 
 #### Влияние использования библиотеки EFCore.BulkExtensions на время выполнения процесса  : 
+
 00:03.68  - SaveChanges();
+
 00:03.46  - SaveChangesAsync();
+
 00:02.10  - BulkInsertAsync();
 
