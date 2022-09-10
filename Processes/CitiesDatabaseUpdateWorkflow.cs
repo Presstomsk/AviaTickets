@@ -69,7 +69,8 @@ namespace AviaTickets.Processes
 
         public void NeedUpdate()
         {
-            _needUpdate = (_updateDate == default) ? true : (-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays) > 30);
+            var delta =(int?) -_updateDate?.Subtract(DateTime.Now).TotalDays;
+            _needUpdate = (_updateDate == default) ? true : delta > 30;
             
         }
 
