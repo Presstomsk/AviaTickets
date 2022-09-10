@@ -24,8 +24,11 @@ namespace AviaTickets.Processes
 
         private DateTime? _updateDate = default;
         private bool _needUpdate = false;
-
         private List<ICities>? _info;
+
+        public DateTime? UpdateDate { get { return _updateDate; } }
+        public bool IsNeedUpdate { get { return _needUpdate; } }
+        public List<ICities>? Info { get { return _info; } }
         public string WorkflowType { get; set; } = "CITIES_DATABASE_UPDATE_WORKFLOW";
 
         public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
@@ -66,7 +69,7 @@ namespace AviaTickets.Processes
 
         public void NeedUpdate()
         {
-            _needUpdate = (_updateDate == default) ? true : (-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays) > 7);
+            _needUpdate = (_updateDate == default) ? true : (-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays) > 30);
             
         }
 
