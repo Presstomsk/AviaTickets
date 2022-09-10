@@ -51,7 +51,7 @@
 
 00:01.79  - SaveChanges();
 
-00:03.46  - SaveChangesAsync();
+00:01.89  - SaveChangesAsync();
 
 00:00.23  - BulkInsertAsync();
 
