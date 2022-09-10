@@ -18,13 +18,13 @@ namespace AviaTickets.Processes.HttpConnect
                    
         }
 
-        public async void Run()
+        public void Run()
         {
             _request = (HttpWebRequest)WebRequest.Create(_address);
             _request.Method = "Get";
             HttpWebResponse response = (HttpWebResponse)_request.GetResponse();
             var stream = response.GetResponseStream();
-            if (stream != null) Response = new StreamReader(stream).ReadToEndAsync().Result;
+            if (stream != null) Response = new StreamReader(stream).ReadToEnd();
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using AviaTickets.Converters;
 using AviaTickets.DB.Abstractions;
-using AviaTickets.Models;
+using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
 using AviaTickets.Scheduler.Abstractions;
@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace AviaTickets.Processes
 {
@@ -24,6 +24,8 @@ namespace AviaTickets.Processes
 
         private DateTime? _updateDate = default;
         private bool _needUpdate = false;
+
+        private List<ICities>? _info;
         public string WorkflowType { get; set; } = "CITIES_DATABASE_UPDATE_WORKFLOW";
 
         public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
@@ -39,6 +41,7 @@ namespace AviaTickets.Processes
                                          .Do(GetUpdateDBDate)
                                          .Do(NeedUpdate)
                                          .Do(CleareDB)
+                                         .Do(RequestCities)
                                          .Do(UpdateDB);
         }
 
@@ -79,18 +82,24 @@ namespace AviaTickets.Processes
             }
         }
 
+        public void RequestCities()
+        {
+            if(_needUpdate)
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(_converter);
+
+                var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
+                request.Run();
+                var response = request.Response;
+                _info = JsonConvert.DeserializeObject<List<ICities>>(response, settings);
+            }
+        }
+
         public async void UpdateDB()
         {
             if (_needUpdate)
             {
-                var settings = new JsonSerializerSettings();
-                settings.Converters.Add(_converter);
-                
-                var request = new GetRequest("http://api.travelpayouts.com/data/ru/cities.json");
-                request.Run();
-                var response = request.Response;
-                var info = JsonConvert.DeserializeObject<List<Cities>>(response, settings);                               
-
                 using (var context = _contextFactory.CreateContext())
                 {
                     var strategy = context.Database.CreateExecutionStrategy();
@@ -99,9 +108,9 @@ namespace AviaTickets.Processes
                         using (var transaction = context.Database.BeginTransaction())
                         {
                             try
-                            { 
-                                
-                                await context.BulkInsertAsync(info);
+                            {
+
+                                await context.BulkInsertAsync(_info);
 
                                 transaction.Commit();
                             }
@@ -113,7 +122,7 @@ namespace AviaTickets.Processes
                         }
                     });
 
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : UpdateDB, База данных обновлена - {info?.Count} элементов");
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : UpdateDB, База данных обновлена - {_info?.Count} элементов");
                 }
             };
         }
