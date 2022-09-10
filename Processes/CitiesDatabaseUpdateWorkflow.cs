@@ -58,15 +58,16 @@ namespace AviaTickets.Processes
                 if (city.Count > 0)
                 {
                     _updateDate = city.OrderBy(x => x.UpdateDate).First().UpdateDate;
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[0] : GetUpdateDBDate, Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : GetUpdateDBDate, Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
                 }
+                else _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : GetUpdateDBDate, БД не заполнена");
             }
         }
 
         public void NeedUpdate()
         {
             _needUpdate = (_updateDate == default) ? true : (-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays) > 7);
-            if (_updateDate != default) _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : NeedUpdate, Последнее обновление было {-((new DateTime(Int32.Parse(_updateDate?.ToString("yyyy")), Int32.Parse(_updateDate?.ToString("MM")), Int32.Parse(_updateDate?.ToString("dd"))) - DateTime.Today).TotalDays)} дней назад");
+            
         }
 
         public async void CleareDB()
@@ -76,7 +77,7 @@ namespace AviaTickets.Processes
                 using (var context = _contextFactory.CreateContext())
                 {
                     context.Cities.Select(x => x).ToList().ForEach(x => { context.Remove(x); });
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[2] : CleareDB, База данных очищена - {context.Cities.Count()} элементов");
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : CleareDB, База данных очищена.");
                     await context.SaveChangesAsync();
                 }
             }
@@ -93,6 +94,8 @@ namespace AviaTickets.Processes
                 request.Run();
                 var response = request.Response;
                 _info = JsonConvert.DeserializeObject<List<ICities>>(response, settings);
+                _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[4] : RequestCities, Данные загружены  - { _info?.Count} элементов ");
+                
             }
         }
 
@@ -122,7 +125,7 @@ namespace AviaTickets.Processes
                         }
                     });
 
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : UpdateDB, База данных обновлена - {_info?.Count} элементов");
+                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[5] : UpdateDB, База данных обновлена.");
                 }
             };
         }
