@@ -49,7 +49,7 @@
 
 #### Влияние использования библиотеки EFCore.BulkExtensions на время сохранения данных в БД : 
 
-00:03.68  - SaveChanges();
+00:01.79  - SaveChanges();
 
 00:03.46  - SaveChangesAsync();
 
