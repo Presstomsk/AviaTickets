@@ -1,0 +1,24 @@
+{
+  "Token": "a46ec1e9059ea9fc6147812e57427521",
+  "Currency": "rub",
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.File" ],
+    "MinimumLevel": "Debug",
+    "Properties": {
+      "client": "client"
+    },
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Properties:j} {Message:lj}{NewLine}{Exception}",
+          "path": "C:\\TestLog\\Testlog-.txt",
+          "fileSizeLimitBytes": "5000000",
+          "retainedFileCountLimit": 400
+
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+  }  
+}
