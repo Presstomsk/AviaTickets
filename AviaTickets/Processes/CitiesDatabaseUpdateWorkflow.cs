@@ -57,7 +57,7 @@ namespace AviaTickets.Processes
         {
             using (var db = _contextFactory.CreateContext())
             {
-                var city = db.Cities.Select(x => x).ToList();
+                var city = db.Cities.Select(x => new {UpdateDate = x.UpdateDate}).ToList();
                 if (city.Count > 0)
                 {
                     _updateDate = city.OrderBy(x => x.UpdateDate).First().UpdateDate;
