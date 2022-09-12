@@ -29,15 +29,15 @@
  
  Controller - контроллер
  
- Processes - процессы
- 
- Scheduler - планировщик
+ Processes - процессы 
  
  Models - модели данных
  
  Validator - Валидатор
  
  Converters - конверторы json сериализатора
+ 
+ #### Scheduler - планировщик (библиотека)
  
  #### AppTests - Юнит-тесты NUnit
  
