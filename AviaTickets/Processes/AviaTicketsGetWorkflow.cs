@@ -3,10 +3,10 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
-using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Scheduler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace AviaTickets.Processes
 {
     public class AviaTicketsGetWorkflow : IAviaTicketsGetWorkflow
     {   
-        private ISchedulerFactory _scheduler;        
+        private ISchedulerFactory<IOut> _scheduler;        
         private IView _viewModel;       
         private TicketConverter _converter;
         private List<Data> _data;
@@ -31,7 +31,7 @@ namespace AviaTickets.Processes
         public string WorkflowType { get; set; } = "AVIA_TICKETS_GET_WORKFLOW";
 
         public AviaTicketsGetWorkflow(IConfigurationRoot configuration
-                                     , ISchedulerFactory schedulerFactory            
+                                     , ISchedulerFactory<IOut> schedulerFactory            
                                      , IView viewModel            
                                      , TicketConverter converter)
         {           
@@ -45,14 +45,31 @@ namespace AviaTickets.Processes
             _scheduler = schedulerFactory.Create(WorkflowType)
                             .Do(ChangeDateFormat)
                             .Do(GetCitiesCodes)
-                            .Do(RequestTickets);
+                            .Do(RequestTickets)
+                            .Build();
                             
         }
 
-        public Statuses.Result Start()
+        public IMessage? Start(IMessage? msg)
         {
-            var result = _scheduler.Start();
-            return new Statuses.Result{ Success = result, Content = _data };
+            if (msg != default)
+            {
+                if (msg.IsSuccess)
+                {
+                    return Start();
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception();
+                }
+            }
+            return Start();
+        }
+
+        public IMessage? Start()
+        {
+            var answer = _scheduler.StartProcess();
+            return new Msg.Message(answer.Item1, _data, _data.GetType(), answer.Item2);
         }
 
         public void ChangeDateFormat()
@@ -124,6 +141,6 @@ namespace AviaTickets.Processes
             var info = JsonConvert.DeserializeObject<ITicket>(response , settings);
             return info;            
         }
-       
+        
     }
 }

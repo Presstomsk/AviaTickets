@@ -3,11 +3,11 @@ using AviaTickets.DB.Abstractions;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
-using AviaTickets.Scheduler.Abstractions;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Scheduler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace AviaTickets.Processes
     {
         private ILogger<ICitiesDatabaseUpdateWorkflow> _logger;
         private IContextFactory _contextFactory;
-        private ISchedulerFactory _scheduler;
+        private ISchedulerFactory<IOut> _scheduler;
         private CitiesConverter _converter;
 
         private DateTime? _updateDate = default;
@@ -32,7 +32,7 @@ namespace AviaTickets.Processes
         public string WorkflowType { get; set; } = "CITIES_DATABASE_UPDATE_WORKFLOW";
 
         public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
-                                            , ISchedulerFactory schedulerFactory
+                                            , ISchedulerFactory<IOut> schedulerFactory
                                             , CitiesConverter converter
                                             , ILogger<ICitiesDatabaseUpdateWorkflow> logger)
         {
@@ -45,13 +45,30 @@ namespace AviaTickets.Processes
                                          .Do(NeedUpdate)
                                          .Do(CleareDB)
                                          .Do(RequestCities)
-                                         .Do(UpdateDB);
+                                         .Do(UpdateDB)
+                                         .Build();
         }
 
-        public Statuses.Result Start()
+        public IMessage? Start(IMessage? msg = default)
         {
-            var result = _scheduler.Start();
-            return  new Statuses.Result { Success = result, Content = null }; 
+            if(msg != default)
+            {
+                if(msg.IsSuccess)
+                {
+                    return Start();
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception(); 
+                }
+            }
+            return Start();
+        }
+
+        public IMessage? Start()
+        {
+            var answer = _scheduler.StartProcess();            
+            return new Msg.Message(answer.Item1,null,null,answer.Item2);
         }
         public void GetUpdateDBDate()
         {
@@ -61,9 +78,9 @@ namespace AviaTickets.Processes
                 if (city.Count > 0)
                 {
                     _updateDate = city.OrderBy(x => x.UpdateDate).First().UpdateDate;
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : GetUpdateDBDate, Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
+                    _logger.LogInformation($"[{DateTime.Now}] Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
                 }
-                else _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[1] : GetUpdateDBDate, БД не заполнена");
+                else _logger.LogInformation($"[{DateTime.Now}] БД не заполнена");
             }
         }
 
@@ -81,7 +98,7 @@ namespace AviaTickets.Processes
                 using (var context = _contextFactory.CreateContext())
                 {
                     context.Cities.Select(x => x).ToList().ForEach(x => { context.Remove(x); });
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[3] : CleareDB, База данных очищена.");
+                    _logger.LogInformation($"[{DateTime.Now}] База данных очищена.");
                     await context.SaveChangesAsync();
                 }
             }
@@ -98,7 +115,7 @@ namespace AviaTickets.Processes
                 request.Run();
                 var response = request.Response;
                 _info = JsonConvert.DeserializeObject<List<ICities>>(response, settings);
-                _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[4] : RequestCities, Данные загружены  - { _info?.Count} элементов ");
+                _logger.LogInformation($"[{DateTime.Now}]  Данные загружены  - { _info?.Count} элементов ");
                 
             }
         }
@@ -129,7 +146,7 @@ namespace AviaTickets.Processes
                         }
                     });
 
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {WorkflowType}, STEP[5] : UpdateDB, База данных обновлена.");
+                    _logger.LogInformation($"[{DateTime.Now}] База данных обновлена.");
                 }
             };
         }

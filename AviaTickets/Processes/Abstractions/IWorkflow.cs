@@ -1,13 +1,11 @@
-﻿
-
-using AviaTickets.Statuses;
+﻿using Scheduler;
 
 namespace AviaTickets.Processes.Abstractions
 {
-    public interface IWorkflow
+    public interface IWorkflow : IOut
     {
-        string WorkflowType { get; set; }
-        public Result Start();
-        
+        string WorkflowType { get; set; }        
+        IMessage? Start();
+
     }
 }

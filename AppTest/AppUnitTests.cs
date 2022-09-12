@@ -77,7 +77,7 @@ namespace AppTest
             Assert.IsTrue(process.IsNeedUpdate);
             Assert.IsTrue(process.Info.Count > 0);
             Assert.IsTrue(numberElementsInDB == process.Info.Count);
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.IsSuccess);
         }
         
         [TestCase("TestCity", "TEST", -30)]
@@ -114,7 +114,7 @@ namespace AppTest
             Assert.IsTrue(numberElementsInDB == 1);
             Assert.IsTrue(elementInTestDB.City == city 
                          && elementInTestDB.Code == code);
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         
@@ -150,7 +150,7 @@ namespace AppTest
             Assert.IsTrue(process.IsNeedUpdate);
             Assert.IsTrue(process.Info.Count > 0);
             Assert.IsTrue(numberElementsInDB == process.Info.Count);
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         [TestCase("TestCity", "TEST")]
@@ -186,7 +186,7 @@ namespace AppTest
                           && view.Cities.Count == 1);
             Assert.IsTrue(elementInListOfCities.City == city
                           && elementInListOfCities.Code == code);
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         [TestCase("Москва", "Новосибирск")]
@@ -281,11 +281,11 @@ namespace AppTest
 
             var process = _serviceProvider.GetService<IAviaTicketsGetWorkflow>();            
             var result = process.Start();
-            var data = result.Content;
+            var data = result.Data;
 
             Assert.IsTrue(data != null);
             Assert.IsTrue((data as List<Data>).Count > 0);
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         [TearDown]

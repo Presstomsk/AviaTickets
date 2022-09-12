@@ -2,8 +2,9 @@
 using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.ViewModel.Absractions;
+using Scheduler;
+using System;
 using System.Linq;
 
 namespace AviaTickets.Processes
@@ -11,12 +12,12 @@ namespace AviaTickets.Processes
     public class CitiesListCreatingWorkflow : ICitiesListCreatingWorkflow
     {
         private IContextFactory _contextFactory;
-        private ISchedulerFactory _scheduler;        
+        private ISchedulerFactory<IOut> _scheduler;        
         private IView _viewModel;       
         
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING_WORKFLOW";        
 
-        public CitiesListCreatingWorkflow(ISchedulerFactory schedulerFactory            
+        public CitiesListCreatingWorkflow(ISchedulerFactory<IOut> schedulerFactory            
                                           , IView viewModel                                       
                                           , IContextFactory contextFactory)
         {           
@@ -24,15 +25,32 @@ namespace AviaTickets.Processes
             _contextFactory = contextFactory;
 
             _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(GetCities);
+                                         .Do(GetCities)
+                                         .Build();
                             
-        }      
-
-        public Statuses.Result Start()
-        {    
-            var result = _scheduler.Start();
-            return new Statuses.Result { Success = result, Content = null };
         }
+
+        public IMessage? Start(IMessage? msg)
+        {
+            if (msg != default)
+            {
+                if (msg.IsSuccess)
+                {
+                    return Start();
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception();
+                }
+            }
+            return Start();
+        }
+
+        public IMessage? Start()
+        {
+            var answer = _scheduler.StartProcess();
+            return new Msg.Message(answer.Item1, null, null, answer.Item2);
+        }        
 
         public void GetCities()
         {
@@ -41,5 +59,7 @@ namespace AviaTickets.Processes
                 _viewModel.Cities = context.Cities.Select(x => new Cities{ City = x.City, Code = x.Code}).ToList<ICities>();
             }
         }
+
+       
     }
 }

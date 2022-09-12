@@ -6,8 +6,6 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler;
-using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.Splash.Logic;
 using AviaTickets.Validator;
 using AviaTickets.ViewModel;
@@ -16,6 +14,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Scheduler;
 using Serilog;
 using System;
 using System.Windows;
@@ -49,9 +48,9 @@ namespace AviaTickets
                                             .AddTransient<IOpenTicketLinkWorkflow, OpenTicketLinkWorkflow>()
                                             .AddTransient<ITicketsCreatedWorkflow, TicketsCreatedWorkflow>()
                                             .AddTransient<IAddTicketsIntoViewWorkflow, AddTicketsIntoViewWorkflow>()
-                                            .AddSingleton<ICitiesDatabaseUpdateWorkflow,CitiesDatabaseUpdateWorkflow>()
-                                            .AddSingleton<ISchedulerFactory, SchedulerFactory>()
-                                            .AddTransient<AbstractValidator<IView>, InputDataValidator>()
+                                            .AddSingleton<ICitiesDatabaseUpdateWorkflow,CitiesDatabaseUpdateWorkflow>()                                            
+                                            .AddSingleton<ISchedulerFactory<IOut>, SchedulerFactory>()
+                                            .AddTransient<AbstractValidator<IView>, InputDataValidator>()                                            
                                             .AddTransient<ICities, Cities>()
                                             .AddTransient<ITicket, Result>()
                                             .BuildServiceProvider();

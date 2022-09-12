@@ -40,6 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Scheduler\Scheduler.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\loading.gif" />
     <Resource Include="Resources\logo.png" />
     <Resource Include="Resources\OneWayStrelka.jpg" />

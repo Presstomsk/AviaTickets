@@ -1,21 +1,22 @@
 ﻿using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
+using Scheduler;
+using System;
 using System.Windows;
 
 namespace AviaTickets.Processes
 {
     public class InputDataValidationWorkflow : IInputDataValidationWorkflow
     {        
-        private ISchedulerFactory _scheduler;
+        private ISchedulerFactory<IOut> _scheduler;
         private AbstractValidator<IView> _validator;
         private IView _view;
-        
+
+        private bool _validateStatus = false;
 
         public string WorkflowType { get; set; } = "INPUT_DATA_VALIDATION";
-        public InputDataValidationWorkflow( ISchedulerFactory schedulerFactory
+        public InputDataValidationWorkflow( ISchedulerFactory<IOut> schedulerFactory
                                            , AbstractValidator<IView> validator
                                            , IView view)
         {                    
@@ -23,14 +24,31 @@ namespace AviaTickets.Processes
             _view = view;
 
             _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(Validate);
+                                         .Do(Validate)
+                                         .Build();
         }
 
-        public Result Start()
+        public IMessage? Start(IMessage? msg)
         {
-            var result = _scheduler.Start();
-            return new Result { Success = result, Content = null };
+            if (msg != default)
+            {
+                if (msg.IsSuccess)
+                {
+                    return Start();
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception();
+                }
+            }
+            return Start();
         }
+
+        public IMessage? Start()
+        {
+            var answer = _scheduler.StartProcess();
+            return new Msg.Message(answer.Item1, null, null, answer.Item2, _validateStatus);
+        }        
 
         private void Validate()
         {
@@ -41,9 +59,12 @@ namespace AviaTickets.Processes
             foreach (var error in result.Errors)
             {                
                 MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw new System.Exception(error.ErrorMessage);               
+                _validateStatus = true;
+                throw new Exception(error.ErrorMessage);               
             }
 
         }
+
+        
     }
 }

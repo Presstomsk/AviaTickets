@@ -1,29 +1,44 @@
 ﻿using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
+using Scheduler;
+using System;
 using System.Diagnostics;
 
 namespace AviaTickets.Processes
 {
     internal class OpenTicketLinkWorkflow : IOpenTicketLinkWorkflow
     {        
-        private ISchedulerFactory _scheduler;
+        private ISchedulerFactory<IOut> _scheduler;
         private string _link;
         public string WorkflowType { get; set; } = "OPEN_TICKET_LINK";
-        public OpenTicketLinkWorkflow(ISchedulerFactory schedulerFactory)
+        public OpenTicketLinkWorkflow(ISchedulerFactory<IOut> schedulerFactory)
         {
             _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(OpenLink);                           
-        }        
-
-        public Result Start() {  return new Statuses.Result{ Success = false, Content = null }; }
-        public Result Start(string link)
-        {
-            _link = link;            
-            _scheduler.Start();
-            return new Statuses.Result { Success = true, Content = null };
-
+                                         .Do(OpenLink)
+                                         .Build();
         }
+
+        public IMessage? Start(IMessage? msg)
+        {
+            if (msg != default)
+            {
+                if (msg.IsSuccess)
+                {
+                    return Start();
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception();
+                }
+            }
+            return Start();
+        }
+
+        public IMessage? Start()
+        {
+            var answer = _scheduler.StartProcess();
+            return new Msg.Message(answer.Item1, null, null, answer.Item2);
+        }
+       
         private void OpenLink()
         {
            Process.Start(new ProcessStartInfo
@@ -32,7 +47,6 @@ namespace AviaTickets.Processes
                UseShellExecute = true
            });
         }
-
-        
+       
     }
 }

@@ -1,37 +1,56 @@
 ﻿using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler.Abstractions;
-using AviaTickets.Statuses;
+using Scheduler;
+using System;
 using System.Collections.Generic;
 
 namespace AviaTickets.Processes
 {
     public class AddTicketsIntoViewWorkflow : IAddTicketsIntoViewWorkflow
     {        
-        private ISchedulerFactory _scheduler;
+        private ISchedulerFactory<IOut> _scheduler;
         private MainWindow _mainWindow;
 
         private List<TicketForm>? _tickets;
 
         public string WorkflowType { get; set; } = "ADD_TICKETS_INTO_VIEW_WORKFLOW";
 
-        public AddTicketsIntoViewWorkflow(ISchedulerFactory schedulerFactory
+        public AddTicketsIntoViewWorkflow(ISchedulerFactory<IOut> schedulerFactory
                                  , MainWindow mainWindow)
         {            
             _mainWindow = mainWindow;
             _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(AddTicketsToMainWindow);
+                                         .Do(AddTicketsToMainWindow)
+                                         .Build();
         }
 
-        public Result Start(object? data)
+        public IMessage? Start(IMessage? msg)
         {
-            _tickets = (data != null) ? data as List<TicketForm> : new List<TicketForm>();
-            var result = _scheduler.Start();
-            return new Result { Success = result, Content = null };
+            if (msg != default)
+            {
+                if (msg.IsSuccess)
+                {
+                    if (typeof(List<TicketForm>) == msg.DataType)
+                    {
+                        _tickets = (List<TicketForm>?)msg.Data;
+                        return Start();
+                    }
+                    else throw new Exception("Input Data has incorrect type");
+
+                }
+                else
+                {
+                    throw msg.Error ?? new Exception();
+                }
+            }
+            else throw new Exception("Input Data is null");
         }
-        public Result Start()
+
+        public IMessage? Start()
         {
-            return new Result { Success = false, Content = null };
+            var answer = _scheduler.StartProcess();
+            return new Msg.Message(answer.Item1, null, null, answer.Item2);
         }
+             
 
         private void AddTicketsToMainWindow()
         {
@@ -44,6 +63,6 @@ namespace AviaTickets.Processes
                     _mainWindow.Tickets.Children.Insert(0, _tickets[i]);
                 }
             }
-        }
+        }        
     }
 }
