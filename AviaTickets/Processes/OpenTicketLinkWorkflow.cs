@@ -8,7 +8,7 @@ namespace AviaTickets.Processes
     internal class OpenTicketLinkWorkflow : IOpenTicketLinkWorkflow
     {        
         private ISchedulerFactory<IOut> _scheduler;
-        private string _link;
+        public string Link { get; set; }
         public string WorkflowType { get; set; } = "OPEN_TICKET_LINK";
         public OpenTicketLinkWorkflow(ISchedulerFactory<IOut> schedulerFactory)
         {
@@ -43,7 +43,7 @@ namespace AviaTickets.Processes
         {
            Process.Start(new ProcessStartInfo
            {
-               FileName = $"https://www.aviasales.ru{_link}",
+               FileName = $"https://www.aviasales.ru{Link}",
                UseShellExecute = true
            });
         }

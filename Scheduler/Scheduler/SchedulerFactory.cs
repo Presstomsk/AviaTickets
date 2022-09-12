@@ -66,7 +66,12 @@ namespace Scheduler
             while (_schedulerProcess?.Count > 0)
             {
                 if (_msg != default && !_msg.IsSuccess && !_msg.ValidateStatus) throw _msg.Error;                
-                else _msg = _schedulerProcess?.Dequeue()?.Start(_msg);
+                else
+                {
+                    _msg = _schedulerProcess?.Dequeue()?.Start(_msg);
+                    if (_msg != default && !_msg.IsSuccess && !_msg.ValidateStatus) throw _msg.Error;
+                }
+                
             }
         }
         public (bool,Exception) StartProcess()
@@ -84,7 +89,7 @@ namespace Scheduler
                     _timer.Stop();
                     var ts = _timer.Elapsed;
                     var elapsedTime = String.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds,ts.Milliseconds / 10);
-                    _logger.LogInformation($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step++}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
+                    _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step++}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
                     if(item?.Count == 0) _scheduler?.Dequeue();
                     _exelent = true;
                     _error = null;
@@ -92,7 +97,7 @@ namespace Scheduler
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR} , {ex.Message}");
+                    _logger?.LogError($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR} , {ex.Message}");
                     _schedulerProcess?.Clear();
                     _scheduler?.Clear();
                     _exelent = false;
