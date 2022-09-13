@@ -7,20 +7,20 @@ namespace AviaTickets.Processes
 {
     public class AddTicketsIntoViewWorkflow : IAddTicketsIntoViewWorkflow
     {        
-        private ISchedulerFactory<IOut> _scheduler;
+        private ISchedulerFactory _scheduler;
         private MainWindow _mainWindow;
 
         private List<TicketForm>? _tickets;
 
         public string WorkflowType { get; set; } = "ADD_TICKETS_INTO_VIEW_WORKFLOW";
 
-        public AddTicketsIntoViewWorkflow(ISchedulerFactory<IOut> schedulerFactory
+        public AddTicketsIntoViewWorkflow(ISchedulerFactory schedulerFactory
                                  , MainWindow mainWindow)
         {            
             _mainWindow = mainWindow;
-            _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(AddTicketsToMainWindow)
-                                         .Build();
+            _scheduler = schedulerFactory.Create()
+                                         .Do(AddTicketsToMainWindow);
+                                         
         }
 
         public IMessage? Start(IMessage? msg)
@@ -47,12 +47,11 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, null, null, answer.Item2);
+           return _scheduler.Start();            
         }
              
 
-        private void AddTicketsToMainWindow()
+        private IMessage? AddTicketsToMainWindow(IMessage? message = default)
         {
             _mainWindow.Tickets.Children.Clear();
 
@@ -63,6 +62,8 @@ namespace AviaTickets.Processes
                     _mainWindow.Tickets.Children.Insert(0, _tickets[i]);
                 }
             }
+
+            return message;
         }        
     }
 }

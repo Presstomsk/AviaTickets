@@ -1,4 +1,5 @@
 ﻿using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
 using Scheduler;
@@ -9,23 +10,21 @@ namespace AviaTickets.Processes
 {
     public class InputDataValidationWorkflow : IInputDataValidationWorkflow
     {        
-        private ISchedulerFactory<IOut> _scheduler;
+        private ISchedulerFactory _scheduler;
         private AbstractValidator<IView> _validator;
-        private IView _view;
-
-        private bool _validateStatus = false;
+        private IView _view;        
 
         public string WorkflowType { get; set; } = "INPUT_DATA_VALIDATION";
-        public InputDataValidationWorkflow( ISchedulerFactory<IOut> schedulerFactory
+        public InputDataValidationWorkflow( ISchedulerFactory schedulerFactory
                                            , AbstractValidator<IView> validator
                                            , IView view)
         {                    
             _validator = validator;
             _view = view;
 
-            _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(Validate)
-                                         .Build();
+            _scheduler = schedulerFactory.Create()
+                                         .Do(Validate);
+                                         
         }
 
         public IMessage? Start(IMessage? msg)
@@ -46,25 +45,22 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, null, null, answer.Item2, _validateStatus);
+            return _scheduler.Start();            
         }        
 
-        private void Validate()
+        private IMessage? Validate(IMessage? message = default)
         {
             var result = _validator.Validate(_view);
 
-            if (result.IsValid) return;
+            if (result.IsValid) return message;
 
             foreach (var error in result.Errors)
             {                
                 MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);
-                _validateStatus = true;
-                throw new Exception(error.ErrorMessage);               
+                return new Message(null, null, false, new Exception(error.ErrorMessage), true);
             }
 
-        }
-
-        
+            return new Message(null, null, false, new Exception(), true); ;
+        }        
     }
 }

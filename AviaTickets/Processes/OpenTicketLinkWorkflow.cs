@@ -7,14 +7,15 @@ namespace AviaTickets.Processes
 {
     internal class OpenTicketLinkWorkflow : IOpenTicketLinkWorkflow
     {        
-        private ISchedulerFactory<IOut> _scheduler;
-        public string Link { get; set; }
+        private ISchedulerFactory _scheduler;
+        private string _link;
+        
         public string WorkflowType { get; set; } = "OPEN_TICKET_LINK";
-        public OpenTicketLinkWorkflow(ISchedulerFactory<IOut> schedulerFactory)
+        public OpenTicketLinkWorkflow(ISchedulerFactory schedulerFactory)
         {
-            _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(OpenLink)
-                                         .Build();
+            _scheduler = schedulerFactory.Create()
+                                         .Do(OpenLink);
+                                         
         }
 
         public IMessage? Start(IMessage? msg)
@@ -23,29 +24,36 @@ namespace AviaTickets.Processes
             {
                 if (msg.IsSuccess)
                 {
-                    return Start();
+                    if (typeof(string) == msg.DataType)
+                    {
+                        _link = (string)msg.Data;
+                        return Start();
+                    }
+                    else throw new Exception("Input Data has incorrect type");
+
                 }
                 else
                 {
                     throw msg.Error ?? new Exception();
                 }
             }
-            return Start();
+            else throw new Exception("Input Data is null");
         }
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, null, null, answer.Item2);
+            return _scheduler.Start();            
         }
        
-        private void OpenLink()
+        private IMessage? OpenLink(IMessage? message = default)
         {
-           Process.Start(new ProcessStartInfo
+           System.Diagnostics.Process.Start(new ProcessStartInfo
            {
-               FileName = $"https://www.aviasales.ru{Link}",
+               FileName = $"https://www.aviasales.ru{_link}",
                UseShellExecute = true
            });
+
+            return message;
         }
        
     }

@@ -19,7 +19,7 @@ namespace AviaTickets.Processes
     {
         private ILogger<ICitiesDatabaseUpdateWorkflow> _logger;
         private IContextFactory _contextFactory;
-        private ISchedulerFactory<IOut> _scheduler;
+        private ISchedulerFactory _scheduler;
         private CitiesConverter _converter;
 
         private DateTime? _updateDate = default;
@@ -32,7 +32,7 @@ namespace AviaTickets.Processes
         public string WorkflowType { get; set; } = "CITIES_DATABASE_UPDATE_WORKFLOW";
 
         public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
-                                            , ISchedulerFactory<IOut> schedulerFactory
+                                            , ISchedulerFactory schedulerFactory
                                             , CitiesConverter converter
                                             , ILogger<ICitiesDatabaseUpdateWorkflow> logger)
         {
@@ -40,13 +40,13 @@ namespace AviaTickets.Processes
             _converter = converter;
             _logger = logger;
 
-            _scheduler = schedulerFactory.Create(WorkflowType)
+            _scheduler = schedulerFactory.Create()
                                          .Do(GetUpdateDBDate)
                                          .Do(NeedUpdate)
                                          .Do(CleareDB)
                                          .Do(RequestCities)
-                                         .Do(UpdateDB)
-                                         .Build();
+                                         .Do(UpdateDB);
+                                         
         }
 
         public IMessage? Start(IMessage? msg = default)
@@ -67,10 +67,9 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();            
-            return new Msg.Message(answer.Item1,null,null,answer.Item2);
+            return _scheduler.Start();            
         }
-        public void GetUpdateDBDate()
+        public IMessage? GetUpdateDBDate(IMessage? message = default)
         {
             using (var db = _contextFactory.CreateContext())
             {
@@ -82,16 +81,25 @@ namespace AviaTickets.Processes
                 }
                 else _logger.LogInformation($"[{DateTime.Now}] БД не заполнена");
             }
+
+            return message;
         }
 
-        public void NeedUpdate()
+        public IMessage? NeedUpdate(IMessage? message = default)
         {
             var delta =(int?) -_updateDate?.Subtract(DateTime.Now).TotalDays;
             _needUpdate = (_updateDate == default) ? true : delta > 30;
-            
+
+            return message;            
         }
 
-        public async void CleareDB()
+        public IMessage? CleareDB(IMessage? message = default)
+        {
+            CleareDataBase();
+            return message;
+        }
+
+        public async void CleareDataBase()
         {
             if (_needUpdate)
             {
@@ -104,7 +112,7 @@ namespace AviaTickets.Processes
             }
         }
 
-        public void RequestCities()
+        public IMessage? RequestCities(IMessage? message = default)
         {
             if(_needUpdate)
             {
@@ -118,9 +126,18 @@ namespace AviaTickets.Processes
                 _logger.LogInformation($"[{DateTime.Now}]  Данные загружены  - { _info?.Count} элементов ");
                 
             }
+
+            return message;
         }
 
-        public async void UpdateDB()
+        public IMessage? UpdateDB(IMessage? message = default)
+        {
+            UpdateDataBase();
+
+            return message;
+        }
+
+        public async void UpdateDataBase()
         {
             if (_needUpdate)
             {

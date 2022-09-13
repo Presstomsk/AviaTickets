@@ -4,14 +4,10 @@
 namespace Scheduler
 
 {
-    public interface ISchedulerFactory<T> where T : class
+    public interface ISchedulerFactory
     {
-        ISchedulerFactory<T> Create(IMessage msg = default);
-        ISchedulerFactory<T> Create(string name);        
-        ISchedulerFactory<T> Do(Action action);
-        ISchedulerFactory<T> Do(T process);
-        ISchedulerFactory<T> Build();
-        (bool,Exception) StartProcess();
-        void Start();
+        ISchedulerFactory Create();
+        ISchedulerFactory Do(Func<IMessage, IMessage> subprocess);
+        IMessage Start(IMessage msg = default);        
     }
 }

@@ -49,7 +49,7 @@ namespace AviaTickets
                                             .AddTransient<ITicketsCreatedWorkflow, TicketsCreatedWorkflow>()
                                             .AddTransient<IAddTicketsIntoViewWorkflow, AddTicketsIntoViewWorkflow>()
                                             .AddSingleton<ICitiesDatabaseUpdateWorkflow,CitiesDatabaseUpdateWorkflow>()                                            
-                                            .AddSingleton<ISchedulerFactory<IOut>, SchedulerFactory>()
+                                            .AddTransient<ISchedulerFactory, SchedulerFactory>()
                                             .AddTransient<AbstractValidator<IView>, InputDataValidator>()                                            
                                             .AddTransient<ICities, Cities>()
                                             .AddTransient<ITicket, Result>()

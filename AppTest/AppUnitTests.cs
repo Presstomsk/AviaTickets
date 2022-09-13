@@ -6,8 +6,6 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Scheduler;
-using AviaTickets.Scheduler.Abstractions;
 using AviaTickets.Validator;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
@@ -16,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Scheduler;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -49,7 +48,7 @@ namespace AppTest
                                            .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
                                            .AddTransient<IAviaTicketsGetWorkflow, AviaTicketsGetWorkflow>()                                           
                                            .AddTransient<AbstractValidator<IView>, InputDataValidator>()
-                                           .AddSingleton<ISchedulerFactory, SchedulerFactory>()
+                                           .AddTransient<ISchedulerFactory, SchedulerFactory>()
                                            .AddTransient<ICities, Cities>()
                                            .BuildServiceProvider();
             using (var db = new TestMainContext())
@@ -77,7 +76,7 @@ namespace AppTest
             Assert.IsTrue(process.IsNeedUpdate);
             Assert.IsTrue(process.Info.Count > 0);
             Assert.IsTrue(numberElementsInDB == process.Info.Count);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result == default);
         }
         
         [TestCase("TestCity", "TEST", -30)]
@@ -114,7 +113,7 @@ namespace AppTest
             Assert.IsTrue(numberElementsInDB == 1);
             Assert.IsTrue(elementInTestDB.City == city 
                          && elementInTestDB.Code == code);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result == default);
         }
 
         
@@ -150,7 +149,7 @@ namespace AppTest
             Assert.IsTrue(process.IsNeedUpdate);
             Assert.IsTrue(process.Info.Count > 0);
             Assert.IsTrue(numberElementsInDB == process.Info.Count);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result == default);
         }
 
         [TestCase("TestCity", "TEST")]
@@ -186,7 +185,7 @@ namespace AppTest
                           && view.Cities.Count == 1);
             Assert.IsTrue(elementInListOfCities.City == city
                           && elementInListOfCities.Code == code);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result == default);
         }
 
         [TestCase("Москва", "Новосибирск")]

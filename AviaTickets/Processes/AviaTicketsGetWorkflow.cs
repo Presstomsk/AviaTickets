@@ -3,6 +3,7 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
+using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ namespace AviaTickets.Processes
 {
     public class AviaTicketsGetWorkflow : IAviaTicketsGetWorkflow
     {   
-        private ISchedulerFactory<IOut> _scheduler;        
+        private ISchedulerFactory _scheduler;        
         private IView _viewModel;       
         private TicketConverter _converter;
         private List<Data> _data;
@@ -31,7 +32,7 @@ namespace AviaTickets.Processes
         public string WorkflowType { get; set; } = "AVIA_TICKETS_GET_WORKFLOW";
 
         public AviaTicketsGetWorkflow(IConfigurationRoot configuration
-                                     , ISchedulerFactory<IOut> schedulerFactory            
+                                     , ISchedulerFactory schedulerFactory            
                                      , IView viewModel            
                                      , TicketConverter converter)
         {           
@@ -42,11 +43,11 @@ namespace AviaTickets.Processes
             _viewModel = viewModel;            
             _converter = converter;
 
-            _scheduler = schedulerFactory.Create(WorkflowType)
+            _scheduler = schedulerFactory.Create()
                             .Do(ChangeDateFormat)
                             .Do(GetCitiesCodes)
-                            .Do(RequestTickets)
-                            .Build();
+                            .Do(RequestTickets);
+                            
                             
         }
 
@@ -68,23 +69,24 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, _data, _data.GetType(), answer.Item2);
+            return _scheduler.Start();            
         }
 
-        public void ChangeDateFormat()
+        public IMessage? ChangeDateFormat(IMessage? message = default)
         {
             _depDateFormat = _viewModel.DepDate.ToString("yyyy-MM-dd");
             _arrDateFormat = _viewModel.ArrDate.ToString("yyyy-MM-dd");
+            return message;
         }
 
-        public void GetCitiesCodes()
+        public IMessage? GetCitiesCodes(IMessage? message = default)
         {
             _depCityCode = GetCityCode(_viewModel.DepCity, _viewModel.Cities);
             _arrCityCode = GetCityCode(_viewModel.ArrCity, _viewModel.Cities);
+            return message;
         }
 
-        public void RequestTickets()
+        public IMessage? RequestTickets(IMessage? message = default)
         {           
             var tickets = new List<ITicket>();
 
@@ -116,6 +118,8 @@ namespace AviaTickets.Processes
 
             _data = distinct;
             _data.Sort((a, b) => a.Price.CompareTo(b.Price));
+
+            return new Message(_data,_data.GetType());
         }       
 
         public string GetCityCode(string mycity, List<ICities>? cities)

@@ -12,21 +12,21 @@ namespace AviaTickets.Processes
     public class CitiesListCreatingWorkflow : ICitiesListCreatingWorkflow
     {
         private IContextFactory _contextFactory;
-        private ISchedulerFactory<IOut> _scheduler;        
+        private ISchedulerFactory _scheduler;        
         private IView _viewModel;       
         
         public string WorkflowType { get; set; } = "CITIES_LIST_CREATING_WORKFLOW";        
 
-        public CitiesListCreatingWorkflow(ISchedulerFactory<IOut> schedulerFactory            
+        public CitiesListCreatingWorkflow(ISchedulerFactory schedulerFactory            
                                           , IView viewModel                                       
                                           , IContextFactory contextFactory)
         {           
             _viewModel = viewModel;            
             _contextFactory = contextFactory;
 
-            _scheduler = schedulerFactory.Create(WorkflowType)
-                                         .Do(GetCities)
-                                         .Build();
+            _scheduler = schedulerFactory.Create()
+                                         .Do(GetCities);
+                                         
                             
         }
 
@@ -48,16 +48,17 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, null, null, answer.Item2);
+            return _scheduler.Start();            
         }        
 
-        public void GetCities()
+        public IMessage? GetCities(IMessage? message = default)
         {
             using (var context = _contextFactory.CreateContext())
             {
                 _viewModel.Cities = context.Cities.Select(x => new Cities{ City = x.City, Code = x.Code}).ToList<ICities>();
             }
+
+            return message;
         }
 
        

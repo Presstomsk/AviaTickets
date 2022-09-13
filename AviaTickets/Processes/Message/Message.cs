@@ -9,15 +9,15 @@ namespace AviaTickets.Processes.Msg
         public object? Data { get ; set ; }
         public Type? DataType { get ; set; }
         public Exception? Error { get ; set; }
-        public bool ValidateStatus { get ; set ; }
+        public bool Validate { get ; set ; }
 
-        public Message(bool isSuccess, object? data, Type? dataType, Exception? error, bool validateStatus = false)
+        public Message(object? data, Type? dataType, bool isSuccess = true, Exception? error = default, bool validate = false)
         {
             IsSuccess = isSuccess;
             Data = data;
             DataType = dataType;
             Error = error;
-            ValidateStatus = validateStatus;
+            Validate = validate;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Models;
 using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +12,7 @@ namespace AviaTickets.Processes
 {
     public class TicketsCreatedWorkflow : ITicketsCreatedWorkflow
     {        
-        private ISchedulerFactory<IOut> _scheduler;
+        private ISchedulerFactory _scheduler;
         private IView _viewModel;
         private List<Data>? _data;
         private List<TicketForm> _tickets;
@@ -20,7 +21,7 @@ namespace AviaTickets.Processes
 
         public string WorkflowType { get; set; } = "TICKETS_CREATED_WORKFLOW";
         public TicketsCreatedWorkflow(IConfigurationRoot configuration
-                                     , ISchedulerFactory<IOut> schedulerFactory
+                                     , ISchedulerFactory schedulerFactory
                                      , IView viewModel)
         {           
             _viewModel = viewModel;
@@ -29,9 +30,9 @@ namespace AviaTickets.Processes
 
             _currency = configuration["Currency"];
 
-            _scheduler = schedulerFactory.Create(WorkflowType)
-                                        .Do(CreateTickets)
-                                        .Build();
+            _scheduler = schedulerFactory.Create()
+                                        .Do(CreateTickets);
+                                        
         }
 
         public IMessage? Start(IMessage? msg)
@@ -58,11 +59,10 @@ namespace AviaTickets.Processes
 
         public IMessage? Start()
         {
-            var answer = _scheduler.StartProcess();
-            return new Msg.Message(answer.Item1, _tickets, _tickets.GetType(), answer.Item2);
+            return _scheduler.Start();            
         }              
 
-        private void CreateTickets()
+        private IMessage? CreateTickets(IMessage? message = default)
         {
             _data?.ForEach(item => 
             {
@@ -93,8 +93,9 @@ namespace AviaTickets.Processes
 
                     _tickets.Add(ticketForm);
                 }
-            });            
+            });
 
+            return new Message(_tickets, _tickets.GetType());
          }        
     }
 }

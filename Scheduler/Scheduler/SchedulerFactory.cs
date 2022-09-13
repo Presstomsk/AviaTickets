@@ -5,109 +5,132 @@ using System.Diagnostics;
 
 namespace Scheduler
 {
-    public interface IOut
-    {
-        public IMessage Start(IMessage msg);
-    }
 
-    public class SchedulerFactory : ISchedulerFactory<IOut> 
+    public class SchedulerFactory : ISchedulerFactory
     {
-        private Queue<Queue<Action>> _scheduler;
-        private Queue<Action> _schedulerElements;
-        private Queue<IOut> _schedulerProcess;
-        private IMessage _msg;
-        private ILogger<ISchedulerFactory<IOut>> _logger;
-        private bool _exelent = false;
-        private string _procName;
+
+        private Process _process;
+
+
+        private ILogger<ISchedulerFactory> _logger;
         private Stopwatch _timer;
-        private Exception _error;
-        public SchedulerFactory(ILogger<ISchedulerFactory<IOut>> logger)
-        {
-            _logger = logger;            
-            _scheduler = new Queue<Queue<Action>>();
-        }
+        private IMessage _msg;
 
-        public ISchedulerFactory<IOut> Create(string procName)
-        {            
-            _schedulerElements = new Queue<Action>();
-            _procName = procName;
+        public SchedulerFactory(ILogger<ISchedulerFactory> logger)
+        {
+            _logger = logger;
             _timer = new Stopwatch();
-            return this;
         }
 
-        public ISchedulerFactory<IOut> Create(IMessage msg = default)
+        public ISchedulerFactory Create()
         {
-            _schedulerProcess?.Clear();
-            _msg = msg;
-            _schedulerProcess = new Queue<IOut>();            
-            _timer = new Stopwatch();
-            return this;
-        }
-
-        public ISchedulerFactory<IOut> Do(Action action)
-        {
-            _schedulerElements?.Enqueue(action);
-            return this;
-        }
-
-        public ISchedulerFactory<IOut> Do(IOut process)
-        {
-            _schedulerProcess?.Enqueue(process);
-            return this;
-        }
-
-        public ISchedulerFactory<IOut> Build()
-        {
-           if (_schedulerElements != null) _scheduler?.Enqueue(_schedulerElements);
-           return this;
-        }
-        public void Start()
-        {
-            while (_schedulerProcess?.Count > 0)
+            _process = new Process
             {
-                if (_msg != default && !_msg.IsSuccess && !_msg.ValidateStatus) throw _msg.Error;                
-                else
+                Guid = Guid.NewGuid()
+                                   ,
+                Subprocesses = new Queue<Subprocess>()
+            };
+
+            return this;
+        }
+
+        public ISchedulerFactory Do(Func<IMessage, IMessage> subprocess)
+        {
+            if (_process != default)
+            {
+                var subProc = new Subprocess
                 {
-                    _msg = _schedulerProcess?.Dequeue()?.Start(_msg);
-                    if (_msg != default && !_msg.IsSuccess && !_msg.ValidateStatus) throw _msg.Error;
-                }
-                
+                    SubprocessName = subprocess.ToString(),
+                    Operation = subprocess
+                };
+
+                _process.Subprocesses.Enqueue(subProc);
             }
+
+            return this;
         }
-        public (bool,Exception) StartProcess()
+
+        public IMessage Start(IMessage msg = default)
         {
-            var step = 1;
-            var item= _scheduler?.Peek();
+            _msg = msg;
 
-
-            while (item?.Count > 0)
+            if (_process != default)
             {
-                try
-                {    
-                    _timer.Restart();
-                    item?.Peek().Invoke();
-                    _timer.Stop();
-                    var ts = _timer.Elapsed;
-                    var elapsedTime = String.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds,ts.Milliseconds / 10);
-                    _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step++}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
-                    if(item?.Count == 0) _scheduler?.Dequeue();
-                    _exelent = true;
-                    _error = null;
+                var step = 1;
 
-                }
-                catch (Exception ex)
+                while (_process?.Subprocesses.Count > 0)
                 {
-                    _logger?.LogError($"[{DateTime.Now}] PROCESS : {_procName}, STEP[{step}] : {item?.Dequeue().Method.Name}, STATUS: {STATUS.ERROR} , {ex.Message}");
-                    _schedulerProcess?.Clear();
-                    _scheduler?.Clear();
-                    _exelent = false;
-                    _error = ex;
+
+                    try
+                    {
+                        _timer.Restart();
+
+                        _msg = _process.Subprocesses.Peek().Operation.Invoke(_msg);
+
+                        if(Validator(_msg))
+                        {
+                            return _msg;
+                        }
+
+                        _timer.Stop();
+
+                        var ts = _timer.Elapsed;
+                        var elapsedTime = String.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+
+                        if (_process != default)
+                        {
+                            _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step++}] : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
+                            _process.Subprocesses?.Dequeue();
+                        }
+                        
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step}] : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.ERROR}, {ex.Message} ");
+
+                        _process.Subprocesses.Clear();
+                        _process = default;
+                        _msg = default;
+
+                        throw ex;
+
+                    }
                 }
-            }           
-            
-            return (_exelent,_error);
+            }
+
+            return _msg;
         }
 
-       
+        private bool Validator(IMessage message)
+        {          
+            
+            if (message != default && !message.IsSuccess && message.Validate)
+            {
+                _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, Validator : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.ERROR}, {message.Error.Message} ");
+               
+                _process.Subprocesses.Clear();
+                _process = default;
+
+                return true;
+            }
+            else if (message != default && !message.IsSuccess && !message.Validate)
+            {
+                throw new Exception(message.Error?.Message);
+            }
+
+            return false;
+        }
+    }
+    public class Process 
+    {
+        public Guid Guid { get; set; }          
+        public Queue<Subprocess> Subprocesses { get; set; }
+    }
+    public class Subprocess
+    {
+        public string SubprocessName { get; set; }
+        public Func<IMessage,IMessage> Operation { get; set; }   
     }
 }

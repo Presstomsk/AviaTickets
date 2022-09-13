@@ -1,4 +1,5 @@
 ﻿using AviaTickets.Processes.Abstractions;
+using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.DependencyInjection;
 using Scheduler;
@@ -13,13 +14,12 @@ namespace AviaTickets.Controller
         private IView? _view;
         private MainWindow? _mainWindow;
         private ServiceProvider _serviceProvider;
-        private ISchedulerFactory<IOut>? _scheduller;
-
+       
         public MainController(ServiceProvider serviceProvider)
         {
             _mainWindow = serviceProvider.GetService<MainWindow>();
             _view = serviceProvider.GetService<IView>();
-            _scheduller = serviceProvider.GetService<ISchedulerFactory<IOut>>();
+            var scheduller = serviceProvider.GetService<ISchedulerFactory>();
 
             if (_mainWindow != default) _mainWindow.DataContext = _view;
             _mainWindow?.Show();
@@ -28,9 +28,9 @@ namespace AviaTickets.Controller
             var citiesDatabaseUpdateWorkflow = _serviceProvider.GetService<ICitiesDatabaseUpdateWorkflow>();
             var citiesListCreatingWorkflow = _serviceProvider.GetService<ICitiesListCreatingWorkflow>();
 
-            _scheduller?.Create()
-                        .Do(citiesDatabaseUpdateWorkflow)
-                        .Do(citiesListCreatingWorkflow)
+             scheduller?.Create()
+                        .Do(citiesDatabaseUpdateWorkflow.Start)
+                        .Do(citiesListCreatingWorkflow.Start)
                         .Start();
 
 
@@ -46,16 +46,17 @@ namespace AviaTickets.Controller
         {
             try
             {
+                var scheduller = _serviceProvider.GetService<ISchedulerFactory>();
                 var inputValidationWorkflow = _serviceProvider.GetService<IInputDataValidationWorkflow>();
                 var aviaTicketsGetWorkflow = _serviceProvider.GetService<IAviaTicketsGetWorkflow>();
                 var ticketsCreatedWorkflow = _serviceProvider.GetService<ITicketsCreatedWorkflow>();
                 var addTicketsIntoViewWorkflow = _serviceProvider.GetService<IAddTicketsIntoViewWorkflow>();
 
-                _scheduller?.Create()
-                            .Do(inputValidationWorkflow)
-                            .Do(aviaTicketsGetWorkflow)
-                            .Do(ticketsCreatedWorkflow)
-                            .Do(addTicketsIntoViewWorkflow)
+                 scheduller?.Create()
+                            .Do(inputValidationWorkflow.Start)
+                            .Do(aviaTicketsGetWorkflow.Start)
+                            .Do(ticketsCreatedWorkflow.Start)
+                            .Do(addTicketsIntoViewWorkflow.Start)
                             .Start();
             }
             catch (Exception ex)
@@ -72,10 +73,14 @@ namespace AviaTickets.Controller
         {
             try
             {
+                var scheduller = _serviceProvider.GetService<ISchedulerFactory>();
                 var openTicketLinkWorkflow = _serviceProvider.GetService<IOpenTicketLinkWorkflow>();
-                openTicketLinkWorkflow.Link = link;
-                _scheduller?.Do(openTicketLinkWorkflow)
-                            .Start();
+
+                var msg = new Message(link,link.GetType());
+
+                 scheduller?.Create()
+                            .Do(openTicketLinkWorkflow.Start)
+                            .Start(msg);
             }
             catch (Exception ex)
             {

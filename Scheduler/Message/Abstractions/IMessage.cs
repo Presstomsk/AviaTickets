@@ -9,6 +9,6 @@ namespace Scheduler
         object Data { get; set; }
         Type DataType { get; set; }
         Exception Error { get; set; }
-        bool ValidateStatus { get; set; }
+        bool Validate { get; set; }
     }
 }
