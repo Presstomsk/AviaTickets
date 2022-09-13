@@ -31,7 +31,7 @@ namespace AviaTickets.Processes
             _currency = configuration["Currency"];
 
             _scheduler = schedulerFactory.Create()
-                                        .Do(CreateTickets);
+                                         .Do(CreateTickets);
                                         
         }
 

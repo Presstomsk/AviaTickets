@@ -5,23 +5,32 @@ using System.Diagnostics;
 
 namespace Scheduler
 {
-
+    /// <summary>
+    /// Планировщик заданий
+    /// </summary>
     public class SchedulerFactory : ISchedulerFactory
     {
-
+        
         private Process _process;
 
 
         private ILogger<ISchedulerFactory> _logger;
         private Stopwatch _timer;
         private IMessage _msg;
-
+        /// <summary>
+        /// Конструктор планировщика
+        /// </summary>
+        /// <param name="logger">Логгер</param>
         public SchedulerFactory(ILogger<ISchedulerFactory> logger)
         {
             _logger = logger;
             _timer = new Stopwatch();
         }
 
+        /// <summary>
+        /// Создание списка задач
+        /// </summary>
+        /// <returns>Текущий планировщик заданий</returns>
         public ISchedulerFactory Create()
         {
             _process = new Process
@@ -34,13 +43,18 @@ namespace Scheduler
             return this;
         }
 
+        /// <summary>
+        /// Добавление задачи в планировщик (список задач)
+        /// </summary>
+        /// <param name="subprocess">Задача (должна принимать и возвращать IMessage)</param>
+        /// <returns>Текущий планировщик заданий</returns>
         public ISchedulerFactory Do(Func<IMessage, IMessage> subprocess)
         {
             if (_process != default)
             {
                 var subProc = new Subprocess
                 {
-                    SubprocessName = subprocess.ToString(),
+                    SubprocessName = subprocess.Method.Name,
                     Operation = subprocess
                 };
 
@@ -50,6 +64,11 @@ namespace Scheduler
             return this;
         }
 
+        /// <summary>
+        /// Запуск выполнения очереди задач
+        /// </summary>
+        /// <param name="msg">Сообщение с данными для первой задачи планировщика</param>
+        /// <returns>Сообщение с данными от последнего элемента планировщика</returns>
         public IMessage Start(IMessage msg = default)
         {
             _msg = msg;
@@ -79,7 +98,7 @@ namespace Scheduler
 
                         if (_process != default)
                         {
-                            _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step++}] : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
+                            _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step++}] : {_process.Subprocesses.Peek().SubprocessName}, STATUS: {STATUS.DONE}, Длительность операции : {elapsedTime} ");
                             _process.Subprocesses?.Dequeue();
                         }
                         
@@ -88,7 +107,7 @@ namespace Scheduler
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step}] : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.ERROR}, {ex.Message} ");
+                        _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step}] : {_process.Subprocesses.Peek().SubprocessName}, STATUS: {STATUS.ERROR}, {ex.Message} ");
 
                         _process.Subprocesses.Clear();
                         _process = default;
@@ -103,12 +122,18 @@ namespace Scheduler
             return _msg;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message">Сообщение, возвращаемое задачей планировщика</param>
+        /// <returns>Рузультаты обработки отрицательного результата без генирации ошибки (Validate = true)</returns>
+        /// <exception cref="Exception">Генерация ошибки при отрицательном результате</exception>
         private bool Validator(IMessage message)
         {          
             
             if (message != default && !message.IsSuccess && message.Validate)
             {
-                _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, Validator : {_process.Subprocesses.Peek().Operation.Method.Name}, STATUS: {STATUS.ERROR}, {message.Error.Message} ");
+                _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, Validator : {_process.Subprocesses.Peek().SubprocessName}, STATUS: {STATUS.ERROR}, {message.Error.Message} ");
                
                 _process.Subprocesses.Clear();
                 _process = default;
@@ -123,14 +148,33 @@ namespace Scheduler
             return false;
         }
     }
+
+    /// <summary>
+    /// Планировщик
+    /// </summary>
     public class Process 
-    {
-        public Guid Guid { get; set; }          
+    {   /// <summary>
+        /// Уникальный идентификатор
+        /// </summary>
+        public Guid Guid { get; set; }        
+        /// <summary>
+        /// Список задач
+        /// </summary>
         public Queue<Subprocess> Subprocesses { get; set; }
     }
+
+    /// <summary>
+    /// Задача
+    /// </summary>
     public class Subprocess
-    {
+    {   
+        /// <summary>
+        /// Название задачи
+        /// </summary>
         public string SubprocessName { get; set; }
+        /// <summary>
+        /// Задача
+        /// </summary>
         public Func<IMessage,IMessage> Operation { get; set; }   
     }
 }
