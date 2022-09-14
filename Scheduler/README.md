@@ -18,15 +18,15 @@
 
 #### Формирование списка задач<br><br>
 
-<p>using Microsoft.Extensions.Logging;</p><br><br>
+<p>using Microsoft.Extensions.Logging;</p><br>
 
-<p>ILogger<ISchedulerFactory> logger = default;</p><br>
-<p>ISchedulerFactory scheduler = new SchedulerFactory(logger);</p><br>
-<p>scheduler.Create()</p><br>
-<p>         .Do(Some_Func_1)</p><br>
-<p>         .Do(Some_Func_2)</p><br>
-<p>         .Do(Some_Func_3)</p><br>
-<p>         .Start(Some_IMessage)</p><br>
+<p>ILogger<ISchedulerFactory> logger = default;</p>
+<p>ISchedulerFactory scheduler = new SchedulerFactory(logger);</p>
+<p>scheduler.Create()</p>
+<p>         .Do(Some_Func_1)</p>
+<p>         .Do(Some_Func_2)</p>
+<p>         .Do(Some_Func_3)</p>
+<p>         .Start(Some_IMessage)</p>
         
 
 
