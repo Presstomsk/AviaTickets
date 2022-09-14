@@ -45,7 +45,7 @@
 
 ## ЛОГИРОВАНИЕ ВНУТРИ ПЛАНИРОВЩИКА:<br><br>
 
-<img src="https://github.com/Presstomsk/AviaTickets/blob/main/Scheduler/docfx_project/_site/api/DocFX/8.png" alt="drawing" width="800"/>
+<img src="https://github.com/Presstomsk/AviaTickets/blob/main/Scheduler/docfx_project/_site/api/DocFX/8.png" alt="drawing" width="1000"/>
 
 
 
