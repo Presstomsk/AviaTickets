@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Scheduler</name>
+    </assembly>
+    <members>
+        <member name="T:Scheduler.IMessage">
+            <summary>
+            Сообщение для обмена данными между задачами
+            </summary>
+        </member>
+        <member name="P:Scheduler.IMessage.IsSuccess">
+            <summary>
+            Положительный/отрицательный результат 
+            </summary>
+        </member>
+        <member name="P:Scheduler.IMessage.Data">
+            <summary>
+            Передаваемые данные при положительном результате
+            </summary>
+        </member>
+        <member name="P:Scheduler.IMessage.DataType">
+            <summary>
+            Тип передаваемых данных при положительном результате
+            </summary>
+        </member>
+        <member name="P:Scheduler.IMessage.Error">
+            <summary>
+            Ошибка при отрицательном результате
+            </summary>
+        </member>
+        <member name="P:Scheduler.IMessage.Validate">
+            <summary>
+            Указание планировщику записывать ошибку только в лог, без ее генерации в коде
+            </summary>
+        </member>
+        <member name="T:Scheduler.ISchedulerFactory">
+            <summary>
+            Планировщик заданий
+            </summary>
+        </member>
+        <member name="M:Scheduler.ISchedulerFactory.Create">
+            <summary>
+            Создание списка задач
+            </summary>
+            <returns>Текущий планировщик заданий</returns>
+        </member>
+        <member name="M:Scheduler.ISchedulerFactory.Do(System.Func{Scheduler.IMessage,Scheduler.IMessage})">
+            <summary>
+            Добавление задачи в планировщик (список задач)
+            </summary>
+            <param name="subprocess">Задача (должна принимать и возвращать IMessage)</param>
+            <returns>Текущий планировщик заданий</returns>
+        </member>
+        <member name="M:Scheduler.ISchedulerFactory.Start(Scheduler.IMessage)">
+            <summary>
+            Запуск выполнения очереди задач
+            </summary>
+            <param name="msg">Сообщение с данными для первой задачи планировщика</param>
+            <returns>Сообщение с данными от последнего элемента планировщика</returns>
+        </member>
+        <member name="T:Scheduler.SchedulerFactory">
+            <summary>
+            Планировщик заданий
+            </summary>
+        </member>
+        <member name="M:Scheduler.SchedulerFactory.#ctor(Microsoft.Extensions.Logging.ILogger{Scheduler.ISchedulerFactory})">
+            <summary>
+            Конструктор планировщика
+            </summary>
+            <param name="logger">Логгер</param>
+        </member>
+        <member name="M:Scheduler.SchedulerFactory.Create">
+            <summary>
+            Создание списка задач
+            </summary>
+            <returns>Текущий планировщик заданий</returns>
+        </member>
+        <member name="M:Scheduler.SchedulerFactory.Do(System.Func{Scheduler.IMessage,Scheduler.IMessage})">
+            <summary>
+            Добавление задачи в планировщик (список задач)
+            </summary>
+            <param name="subprocess">Задача (должна принимать и возвращать IMessage)</param>
+            <returns>Текущий планировщик заданий</returns>
+        </member>
+        <member name="M:Scheduler.SchedulerFactory.Start(Scheduler.IMessage)">
+            <summary>
+            Запуск выполнения очереди задач
+            </summary>
+            <param name="msg">Сообщение с данными для первой задачи планировщика</param>
+            <returns>Сообщение с данными от последнего элемента планировщика</returns>
+        </member>
+        <member name="M:Scheduler.SchedulerFactory.Validator(Scheduler.IMessage)">
+            <summary>
+            
+            </summary>
+            <param name="message">Сообщение, возвращаемое задачей планировщика</param>
+            <returns>Рузультаты обработки отрицательного результата без генирации ошибки (Validate = true)</returns>
+            <exception cref="T:System.Exception">Генерация ошибки при отрицательном результате</exception>
+        </member>
+        <member name="T:Scheduler.Process">
+            <summary>
+            Планировщик
+            </summary>
+        </member>
+        <member name="P:Scheduler.Process.Guid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:Scheduler.Process.Subprocesses">
+            <summary>
+            Список задач
+            </summary>
+        </member>
+        <member name="T:Scheduler.Subprocess">
+            <summary>
+            Задача
+            </summary>
+        </member>
+        <member name="P:Scheduler.Subprocess.SubprocessName">
+            <summary>
+            Название задачи
+            </summary>
+        </member>
+        <member name="P:Scheduler.Subprocess.Operation">
+            <summary>
+            Задача
+            </summary>
+        </member>
+        <member name="T:Scheduler.STATUS">
+            <summary>
+            Статусы процесса
+            </summary>
+        </member>
+    </members>
+</doc>
