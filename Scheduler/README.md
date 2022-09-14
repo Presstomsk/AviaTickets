@@ -23,6 +23,7 @@
 
 <p>ILogger<ISchedulerFactory> logger = default;</p>
 <p>ISchedulerFactory scheduler = new SchedulerFactory(logger);</p>
+<var>
 <p>var msg = scheduler.Create().Do(Some_Func_1).Do(Some_Func_2).Do(Some_Func_3).Start(Some_IMessage);</p><br>
 
 #### Формирование положительного сообщения<br><br>
