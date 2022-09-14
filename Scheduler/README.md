@@ -22,11 +22,28 @@
 
 <p>ILogger<ISchedulerFactory> logger = default;</p>
 <p>ISchedulerFactory scheduler = new SchedulerFactory(logger);</p>
-<p>scheduler.Create()</p>
-<p style="margin-left: 40px">         .Do(Some_Func_1)</p>
-<p>         .Do(Some_Func_2)</p>
-<p>         .Do(Some_Func_3)</p>
-<p>         .Start(Some_IMessage)</p>
+<p>var msg = scheduler.Create().Do(Some_Func_1).Do(Some_Func_2).Do(Some_Func_3).Start(Some_IMessage);</p><br>
+
+#### Формирование положительного сообщения<br><br>
+
+<p>public class Message : IMessage</p><br>
+<p>public class Data</p><br>
+
+<p>Data data = new Data{.....};</p>
+<p>IMessage msg = new Message(data, data.GetType())</p><br>
+
+#### Формирование отрицательного сообщения с генерацией исключения в коде<br><br>
+
+<p>public class Message : IMessage</p><br>
+<p>IMessage msg = new Message(null, null, false, new Exception("error"))</p><br>
+
+#### Формирование отрицательного сообщения без генерации исключения в коде<br><br>
+
+<p>public class Message : IMessage</p><br>
+<p>IMessage msg = new Message(null, null, false, new Exception("error"), true)</p><br>
+
+
+
         
 
 
