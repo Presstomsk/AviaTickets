@@ -41,9 +41,11 @@
 #### Формирование отрицательного сообщения без генерации исключения в коде<br><br>
 
 <p>public class Message : IMessage</p><br>
-<p>IMessage msg = new Message(null, null, false, new Exception("error"), true);</p><br>
+<p>IMessage msg = new Message(null, null, false, new Exception("error"), true);</p><br><br>
 
-## ЛОГИРОВАНИЕ ВНУТРИ ПЛАНИРОВЩИКА:
+## ЛОГИРОВАНИЕ ВНУТРИ ПЛАНИРОВЩИКА:<br><br>
+
+<img src="https://github.com/Presstomsk/AviaTickets/blob/main/Scheduler/docfx_project/_site/api/DocFX/8.png" alt="drawing" width="800"/>
 
 
 
