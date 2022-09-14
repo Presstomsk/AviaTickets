@@ -23,7 +23,7 @@
 <p>ILogger<ISchedulerFactory> logger = default;</p>
 <p>ISchedulerFactory scheduler = new SchedulerFactory(logger);</p>
 <p>scheduler.Create()</p>
-<p>         .Do(Some_Func_1)</p>
+<p style="margin-left: 40px">         .Do(Some_Func_1)</p>
 <p>         .Do(Some_Func_2)</p>
 <p>         .Do(Some_Func_3)</p>
 <p>         .Start(Some_IMessage)</p>
