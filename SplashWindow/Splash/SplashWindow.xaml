@@ -1,0 +1,18 @@
+﻿<Window x:Class="Splash.SplashWindow"        
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Splash"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com" 
+        mc:Ignorable="d"
+        Height="200" Width="150" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">    
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70*"/>
+            <RowDefinition Height="30*"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="myGif" Grid.Row="1"  gif:ImageBehavior.AnimatedSource="/SplashWindow;component/Resources/loading.gif"/>
+        <Image Grid.Row="0" Margin="5,0" Source="/SplashWindow;component/Resources/logo.png" />
+    </Grid>
+</Window>
