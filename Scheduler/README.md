@@ -30,17 +30,17 @@
 <p>public class Data</p><br>
 
 <p>Data data = new Data{.....};</p>
-<p>IMessage msg = new Message(data, data.GetType())</p><br>
+<p>IMessage msg = new Message(data, data.GetType());</p><br>
 
 #### Формирование отрицательного сообщения с генерацией исключения в коде<br><br>
 
 <p>public class Message : IMessage</p><br>
-<p>IMessage msg = new Message(null, null, false, new Exception("error"))</p><br>
+<p>IMessage msg = new Message(null, null, false, new Exception("error"));</p><br>
 
 #### Формирование отрицательного сообщения без генерации исключения в коде<br><br>
 
 <p>public class Message : IMessage</p><br>
-<p>IMessage msg = new Message(null, null, false, new Exception("error"), true)</p><br>
+<p>IMessage msg = new Message(null, null, false, new Exception("error"), true);</p><br>
 
 
 
