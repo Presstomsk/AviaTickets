@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AviaTickets"
         mc:Ignorable="d"
+        Icon="/AviaTickets;component/Resources/icon.ico"
         Title="AviaTickets" Height="800" Width="1000" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
@@ -34,7 +35,7 @@
         <TextBox Text="{Binding ArrCity, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center"  TextAlignment="Center"  VerticalAlignment="Center"  Width="180" Height="30"/>
         <DatePicker DisplayDateStart="{Binding FirstDateStart}" SelectedDate="{Binding DepDate, UpdateSourceTrigger=PropertyChanged}" DisplayDate="{Binding DateTime.Now}"  Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center"  VerticalAlignment="Center"  Width="180" Height="30"/>
         <DatePicker  DisplayDateStart="{Binding SecondDateStart, UpdateSourceTrigger=PropertyChanged}" SelectedDate="{Binding ArrDate, UpdateSourceTrigger=PropertyChanged}" DisplayDate="{Binding DateTime.Now}"  Grid.Column="4" Grid.Row="2" HorizontalAlignment="Center"  VerticalAlignment="Center"  Width="180" Height="30"/>
-        <Button Grid.Column="5" Grid.Row="2" Command="{Binding Search}" Content="Поиск"  HorizontalAlignment="Center"  VerticalAlignment="Center"  Width="180" Height="30" />
+        <Button Grid.Column="5" Grid.Row="2" Command="{Binding Search}" Content="Поиск"  HorizontalAlignment="Center"  VerticalAlignment="Center"  Width="180" Height="30" Background="LightSkyBlue"/>
         <CheckBox x:Name="OneWay" IsChecked="{Binding OneWayTicket, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Content="One Way Ticket"  HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center"/>
         <CheckBox x:Name="ReturnWay" IsChecked="{Binding ReturnTicket, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Content="Return Ticket"  HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center"/>
         <CheckBox x:Name="WayWithTransfer" IsChecked="{Binding WayWithTransferTicket, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Content="С пересадками"  HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center"/>

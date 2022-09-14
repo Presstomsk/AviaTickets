@@ -9,7 +9,7 @@
         MinWidth="900" MinHeight="110"
         MaxHeight="110">
     <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:TicketForm}}">
-        <Button Command="{Binding DataContext.GoToLink}">
+        <Button Command="{Binding DataContext.GoToLink}" Background="LightSkyBlue">
             <Grid Width="900" Height="110">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
