@@ -10,13 +10,15 @@ namespace AviaTickets.Validator
         {
             _view = view;
 
-            RuleFor(x => x.Cities).NotEmpty().WithMessage("Ошибка подключения к серверу!");
+            RuleFor(x => x.Cities).NotEmpty().WithMessage("Ошибка загрузки данных!");
 
             RuleFor(x => x.DepCity).NotEmpty().WithMessage("Введите пункт отправления!")
                                  .Must(CheckCities).WithMessage("Введите корректный пункт отправления!");
 
             RuleFor(x => x.ArrCity).NotEmpty().WithMessage("Введите пункт прибытия!")
-                                 .Must(CheckCities).WithMessage("Введите корректный пункт прибытия!");
+                                 .Must(CheckCities).WithMessage("Введите корректный пункт прибытия!");            
+            RuleFor(x => x.OneWayTicket).Must(x => x).WithMessage("Выберите тип билета!").When(x => !x.ReturnTicket);
+           
         }       
 
         protected bool CheckCities(string depCity)
