@@ -16,5 +16,17 @@
  
 ## ПРИМЕР ИСПОЛЬЗОВАНИЯ: 
 
+#### Формирование списка задач
+
+using Microsoft.Extensions.Logging;
+
+ILogger<ISchedulerFactory> logger = default;
+ISchedulerFactory scheduler = new SchedulerFactory(logger);
+scheduler.Create()
+         .Do(Some_Func_1)
+         .Do(Some_Func_2)
+         .Do(Some_Func_3)
+         .Start(Some_IMessage)
+        
 
 
