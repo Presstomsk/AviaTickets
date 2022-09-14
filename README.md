@@ -37,7 +37,7 @@
  
  Converters - конверторы json сериализатора
  
- #### Scheduler - планировщик (библиотека)
+ #### Scheduler - планировщик (библиотека)(https://github.com/Presstomsk/AviaTickets/tree/main/Scheduler)
  
  #### AppTests - Юнит-тесты NUnit
  
