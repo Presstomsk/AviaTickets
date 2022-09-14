@@ -2,6 +2,6 @@
 #### Библиотека планировщика выполнения задач.
 
 ## ДОКУМЕНТАЦИЯ:
-#### Class SchedulerFactory
+### Class SchedulerFactory
 
 
