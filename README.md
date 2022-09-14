@@ -39,7 +39,7 @@
  
  #### [Scheduler - планировщик (библиотека)](https://github.com/Presstomsk/AviaTickets/tree/main/Scheduler)
  
- #### AppTests - Юнит-тесты NUnit
+ #### [AppTests - Юнит-тесты NUnit](https://github.com/Presstomsk/AviaTickets/tree/main/AppTest)
  
 ## ОПИСАНИЕ:
  
