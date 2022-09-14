@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:AviaTickets.Splash"
         xmlns:gif="http://wpfanimatedgif.codeplex.com" 
         mc:Ignorable="d"
-        Height="200" Width="150" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Height="200" Width="150" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">    
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="70*"/>
             <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
-        <Image x:Name="myGif" Grid.Row="1" Margin="30,0,5,0" gif:ImageBehavior.AnimatedSource="/AviaTickets;component/Resources/loading.gif"/>
+        <Image x:Name="myGif" Grid.Row="1"  gif:ImageBehavior.AnimatedSource="/AviaTickets;component/Resources/loading.gif"/>
         <Image Grid.Row="0" Margin="5,0" Source="/AviaTickets;component/Resources/logo.png" />
     </Grid>
 </Window>
