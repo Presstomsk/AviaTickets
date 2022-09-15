@@ -11,20 +11,22 @@ namespace AviaTickets.Controller
     public delegate void TicketClickHandler(string link);
     public class MainController
     {
-        private IView? _view;
-        private MainWindow? _mainWindow;
+        private IView? _view;        
         private ServiceProvider _serviceProvider;
+        private MainWindow _mainWindow;
        
         public MainController(ServiceProvider serviceProvider)
         {
-            _mainWindow = serviceProvider.GetService<MainWindow>();
-            _view = serviceProvider.GetService<IView>();
-            var scheduller = serviceProvider.GetService<ISchedulerFactory>();
-
-            if (_mainWindow != default) _mainWindow.DataContext = _view;
-            _mainWindow?.Show();
-
             _serviceProvider = serviceProvider;
+
+            _view = _serviceProvider.GetService<IView>();
+            _mainWindow = _serviceProvider.GetService<MainWindow>();
+            _mainWindow.DataContext = _view;
+            _mainWindow.Show();
+
+            var scheduller = serviceProvider.GetService<ISchedulerFactory>();            
+
+            
             var citiesDatabaseUpdateWorkflow = _serviceProvider.GetService<ICitiesDatabaseUpdateWorkflow>();
             var citiesListCreatingWorkflow = _serviceProvider.GetService<ICitiesListCreatingWorkflow>();
 

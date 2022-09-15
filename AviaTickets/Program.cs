@@ -6,7 +6,6 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Splash.Logic;
 using AviaTickets.Validator;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
@@ -16,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scheduler;
 using Serilog;
+using Splash;
 using System;
 using System.Windows;
 
@@ -28,6 +28,8 @@ namespace AviaTickets
         {
             try
             {
+                var mainWindow = new MainWindow();
+
                 using (var loadingVisualiser = new SplashWindow("loading..."))
                 {
                     var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
@@ -37,7 +39,7 @@ namespace AviaTickets
                     _serviceProvider = new ServiceCollection()
                                             .AddSingleton(configuration)
                                             .AddLogging((config) => config.AddSerilog(serilog))
-                                            .AddSingleton<MainWindow>()
+                                            .AddSingleton(mainWindow)
                                             .AddSingleton<IView, View>()
                                             .AddSingleton<CitiesConverter>()
                                             .AddSingleton<TicketConverter>()
@@ -58,7 +60,7 @@ namespace AviaTickets
                     using (var db = new MainContext()) 
                     {                        
                         db.Database.Migrate();
-                    }
+                    }                
 
                     new MainController(_serviceProvider);
                 }

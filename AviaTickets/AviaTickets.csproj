@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <None Remove="Resources\icon.ico" />
-    <None Remove="Resources\loading.gif" />
-    <None Remove="Resources\logo.png" />
     <None Remove="Resources\OneWayStrelka.jpg" />
     <None Remove="Resources\ReturnWay.jpg" />
   </ItemGroup>
@@ -37,17 +35,15 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Scheduler\Scheduler.csproj" />
+    <ProjectReference Include="..\SplashWindow\SplashWindow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\icon.ico" />
-    <Resource Include="Resources\loading.gif" />
-    <Resource Include="Resources\logo.png" />
     <Resource Include="Resources\OneWayStrelka.jpg" />
     <Resource Include="Resources\ReturnWay.jpg" />
   </ItemGroup>
