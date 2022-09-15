@@ -107,7 +107,7 @@ namespace Scheduler
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step}] : {_process.Subprocesses.Peek().SubprocessName}, STATUS: {STATUS.ERROR}, {ex.Message} ");
+                        _logger?.LogInformation($"[{DateTime.Now}] PROCESS : {_process.Subprocesses.Peek().Operation.Method.DeclaringType.Name}, STEP[{step}] : {_process.Subprocesses.Peek().SubprocessName}, STATUS: {STATUS.ERROR}, {ex} ");
 
                         _process.Subprocesses.Clear();
                         _process = default;
