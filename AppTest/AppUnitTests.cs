@@ -194,6 +194,7 @@ namespace AppTest
             var view = _serviceProvider.GetService<IView>();
             view.DepCity = depCity;
             view.ArrCity = arrCity;
+            view.ReturnTicket = true;
             view.Cities = default;
 
             AbstractValidator<IView> validator = new InputDataValidator(view);
@@ -202,7 +203,7 @@ namespace AppTest
             var error = result.Errors.First().ErrorMessage;
 
             Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(error == "Ошибка подключения к серверу!");
+            Assert.IsTrue(error == "Ошибка загрузки данных!");
 
         }
 
@@ -243,6 +244,7 @@ namespace AppTest
             var view = _serviceProvider.GetService<IView>();
             view.DepCity = depCity;
             view.ArrCity = arrCity;
+            view.ReturnTicket = true;
             view.Cities = cities;
 
             AbstractValidator<IView> validator = new InputDataValidator(view);

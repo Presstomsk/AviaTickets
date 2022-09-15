@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AviaTickets", "AviaTickets.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppTest", "..\AppTest\AppTest.csproj", "{F432B46D-EDC3-49E9-922C-7F8B0566BA86}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheduler", "..\Scheduler\Scheduler.csproj", "{9BED2F51-4B17-4767-89DE-397E9097C8EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheduler", "..\Scheduler\Scheduler.csproj", "{9BED2F51-4B17-4767-89DE-397E9097C8EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
