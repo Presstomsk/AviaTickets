@@ -37,7 +37,7 @@
  
  Converters - конверторы json сериализатора
  
- #### [Scheduler - планировщик (библиотека)](https://github.com/Presstomsk/AviaTickets/tree/main/Scheduler)
+ #### [Scheduler - планировщик (библиотека)](https://github.com/Presstomsk/Scheduler)
  
  #### [AppTests - Юнит-тесты NUnit](https://github.com/Presstomsk/AviaTickets/tree/main/AppTest)
  
