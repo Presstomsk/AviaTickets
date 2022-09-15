@@ -1,0 +1,60 @@
+### YamlMime:ManagedReference
+items:
+- uid: Scheduler
+  commentId: N:Scheduler
+  id: Scheduler
+  children:
+  - Scheduler.IMessage
+  - Scheduler.ISchedulerFactory
+  - Scheduler.Process
+  - Scheduler.SchedulerFactory
+  - Scheduler.STATUS
+  - Scheduler.Subprocess
+  langs:
+  - csharp
+  - vb
+  name: Scheduler
+  nameWithType: Scheduler
+  fullName: Scheduler
+  type: Namespace
+  assemblies:
+  - Scheduler
+references:
+- uid: Scheduler.IMessage
+  commentId: T:Scheduler.IMessage
+  parent: Scheduler
+  name: IMessage
+  nameWithType: IMessage
+  fullName: Scheduler.IMessage
+- uid: Scheduler.ISchedulerFactory
+  commentId: T:Scheduler.ISchedulerFactory
+  parent: Scheduler
+  name: ISchedulerFactory
+  nameWithType: ISchedulerFactory
+  fullName: Scheduler.ISchedulerFactory
+- uid: Scheduler.SchedulerFactory
+  commentId: T:Scheduler.SchedulerFactory
+  name: SchedulerFactory
+  nameWithType: SchedulerFactory
+  fullName: Scheduler.SchedulerFactory
+- uid: Scheduler.Process
+  commentId: T:Scheduler.Process
+  name: Process
+  nameWithType: Process
+  fullName: Scheduler.Process
+- uid: Scheduler.Subprocess
+  commentId: T:Scheduler.Subprocess
+  name: Subprocess
+  nameWithType: Subprocess
+  fullName: Scheduler.Subprocess
+- uid: Scheduler.STATUS
+  commentId: T:Scheduler.STATUS
+  parent: Scheduler
+  name: STATUS
+  nameWithType: STATUS
+  fullName: Scheduler.STATUS
+- uid: Scheduler
+  commentId: N:Scheduler
+  name: Scheduler
+  nameWithType: Scheduler
+  fullName: Scheduler

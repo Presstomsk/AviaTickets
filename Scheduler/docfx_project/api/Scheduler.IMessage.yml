@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: Scheduler.IMessage
+  commentId: T:Scheduler.IMessage
+  id: IMessage
+  parent: Scheduler
+  children:
+  - Scheduler.IMessage.Data
+  - Scheduler.IMessage.DataType
+  - Scheduler.IMessage.Error
+  - Scheduler.IMessage.IsSuccess
+  - Scheduler.IMessage.Validate
+  langs:
+  - csharp
+  - vb
+  name: IMessage
+  nameWithType: IMessage
+  fullName: Scheduler.IMessage
+  type: Interface
+  source:
+    id: IMessage
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 7
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nСообщение для обмена данными между задачами\n"
+  example: []
+  syntax:
+    content: public interface IMessage
+    content.vb: Public Interface IMessage
+  modifiers.csharp:
+  - public
+  - interface
+  modifiers.vb:
+  - Public
+  - Interface
+- uid: Scheduler.IMessage.IsSuccess
+  commentId: P:Scheduler.IMessage.IsSuccess
+  id: IsSuccess
+  parent: Scheduler.IMessage
+  langs:
+  - csharp
+  - vb
+  name: IsSuccess
+  nameWithType: IMessage.IsSuccess
+  fullName: Scheduler.IMessage.IsSuccess
+  type: Property
+  source:
+    id: IsSuccess
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 12
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nПоложительный/отрицательный результат \n"
+  example: []
+  syntax:
+    content: bool IsSuccess { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Property IsSuccess As Boolean
+  overload: Scheduler.IMessage.IsSuccess*
+  modifiers.csharp:
+  - get
+  - set
+- uid: Scheduler.IMessage.Data
+  commentId: P:Scheduler.IMessage.Data
+  id: Data
+  parent: Scheduler.IMessage
+  langs:
+  - csharp
+  - vb
+  name: Data
+  nameWithType: IMessage.Data
+  fullName: Scheduler.IMessage.Data
+  type: Property
+  source:
+    id: Data
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 16
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nПередаваемые данные при положительном результате\n"
+  example: []
+  syntax:
+    content: object Data { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Property Data As Object
+  overload: Scheduler.IMessage.Data*
+  modifiers.csharp:
+  - get
+  - set
+- uid: Scheduler.IMessage.DataType
+  commentId: P:Scheduler.IMessage.DataType
+  id: DataType
+  parent: Scheduler.IMessage
+  langs:
+  - csharp
+  - vb
+  name: DataType
+  nameWithType: IMessage.DataType
+  fullName: Scheduler.IMessage.DataType
+  type: Property
+  source:
+    id: DataType
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 20
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nТип передаваемых данных при положительном результате\n"
+  example: []
+  syntax:
+    content: Type DataType { get; set; }
+    parameters: []
+    return:
+      type: System.Type
+    content.vb: Property DataType As Type
+  overload: Scheduler.IMessage.DataType*
+  modifiers.csharp:
+  - get
+  - set
+- uid: Scheduler.IMessage.Error
+  commentId: P:Scheduler.IMessage.Error
+  id: Error
+  parent: Scheduler.IMessage
+  langs:
+  - csharp
+  - vb
+  name: Error
+  nameWithType: IMessage.Error
+  fullName: Scheduler.IMessage.Error
+  type: Property
+  source:
+    id: Error
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 24
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nОшибка при отрицательном результате\n"
+  example: []
+  syntax:
+    content: Exception Error { get; set; }
+    parameters: []
+    return:
+      type: System.Exception
+    content.vb: Property Error As Exception
+  overload: Scheduler.IMessage.Error*
+  modifiers.csharp:
+  - get
+  - set
+- uid: Scheduler.IMessage.Validate
+  commentId: P:Scheduler.IMessage.Validate
+  id: Validate
+  parent: Scheduler.IMessage
+  langs:
+  - csharp
+  - vb
+  name: Validate
+  nameWithType: IMessage.Validate
+  fullName: Scheduler.IMessage.Validate
+  type: Property
+  source:
+    id: Validate
+    path: C:\Users\user\source\repos\NewRepo4\AviaTickets\Scheduler\Message\Abstractions\IMessage.cs
+    startLine: 28
+  assemblies:
+  - Scheduler
+  namespace: Scheduler
+  summary: "\nУказание планировщику записывать ошибку только в лог, без ее генерации в коде\n"
+  example: []
+  syntax:
+    content: bool Validate { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Property Validate As Boolean
+  overload: Scheduler.IMessage.Validate*
+  modifiers.csharp:
+  - get
+  - set
+references:
+- uid: Scheduler
+  commentId: N:Scheduler
+  name: Scheduler
+  nameWithType: Scheduler
+  fullName: Scheduler
+- uid: Scheduler.IMessage.IsSuccess*
+  commentId: Overload:Scheduler.IMessage.IsSuccess
+  name: IsSuccess
+  nameWithType: IMessage.IsSuccess
+  fullName: Scheduler.IMessage.IsSuccess
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Scheduler.IMessage.Data*
+  commentId: Overload:Scheduler.IMessage.Data
+  name: Data
+  nameWithType: IMessage.Data
+  fullName: Scheduler.IMessage.Data
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: Scheduler.IMessage.DataType*
+  commentId: Overload:Scheduler.IMessage.DataType
+  name: DataType
+  nameWithType: IMessage.DataType
+  fullName: Scheduler.IMessage.DataType
+- uid: System.Type
+  commentId: T:System.Type
+  parent: System
+  isExternal: true
+  name: Type
+  nameWithType: Type
+  fullName: System.Type
+- uid: Scheduler.IMessage.Error*
+  commentId: Overload:Scheduler.IMessage.Error
+  name: Error
+  nameWithType: IMessage.Error
+  fullName: Scheduler.IMessage.Error
+- uid: System.Exception
+  commentId: T:System.Exception
+  parent: System
+  isExternal: true
+  name: Exception
+  nameWithType: Exception
+  fullName: System.Exception
+- uid: Scheduler.IMessage.Validate*
+  commentId: Overload:Scheduler.IMessage.Validate
+  name: Validate
+  nameWithType: IMessage.Validate
+  fullName: Scheduler.IMessage.Validate
