@@ -21,9 +21,7 @@
  
  DB - контекст данных
  
- Migrations - миграции
- 
- Splash - Splash Window
+ Migrations - миграции 
  
  ViewModel - модель представления.
  
@@ -38,6 +36,8 @@
  Converters - конверторы json сериализатора
  
  #### [Scheduler - планировщик (библиотека)](https://github.com/Presstomsk/Scheduler)
+ 
+ #### [SplashWindow - окно загрузки (библиотека)]() 
  
  #### [AppTests - Юнит-тесты NUnit](https://github.com/Presstomsk/AviaTickets/tree/main/AppTest)
  
