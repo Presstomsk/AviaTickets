@@ -37,7 +37,7 @@
  
  #### [Scheduler - планировщик (библиотека)](https://github.com/Presstomsk/Scheduler)
  
- #### [SplashWindow - окно загрузки (библиотека)]() 
+ #### [SplashWindow - окно загрузки (библиотека)](https://github.com/Presstomsk/SplashWindow) 
  
  #### [AppTests - Юнит-тесты NUnit](https://github.com/Presstomsk/AviaTickets/tree/main/AppTest)
  
