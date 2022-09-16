@@ -1,7 +1,6 @@
 ﻿using AviaTickets.Controller;
 using AviaTickets.Converters;
 using AviaTickets.DB;
-using AviaTickets.DB.Abstractions;
 using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes;
@@ -34,7 +33,9 @@ namespace AviaTickets
                 {
                     var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();                   
+                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
+
+                    var connectionString = configuration.GetConnectionString("MainDb");
 
                     _serviceProvider = new ServiceCollection()
                                             .AddSingleton(configuration)
@@ -43,7 +44,7 @@ namespace AviaTickets
                                             .AddSingleton<IView, View>()
                                             .AddSingleton<CitiesConverter>()
                                             .AddSingleton<TicketConverter>()
-                                            .AddSingleton<IContextFactory,ContextFactory>()
+                                            .AddDbContextFactory<MainContext>(options => options.UseSqlite(connectionString))                                            
                                             .AddSingleton<ICitiesListCreatingWorkflow, CitiesListCreatingWorkflow>()
                                             .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
                                             .AddTransient<IAviaTicketsGetWorkflow, AviaTicketsGetWorkflow>()
@@ -57,9 +58,9 @@ namespace AviaTickets
                                             .AddTransient<ITicket, Result>()
                                             .BuildServiceProvider();
 
-                    using (var db = new MainContext()) 
+                    using (var db = _serviceProvider.GetService<IDbContextFactory<MainContext>>()?.CreateDbContext()) 
                     {                        
-                        db.Database.Migrate();
+                        db?.Database.Migrate();
                     }                
 
                     new MainController(_serviceProvider);

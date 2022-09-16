@@ -1,13 +1,19 @@
-﻿using AviaTickets.DB.Abstractions;
-
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AviaTickets.DB
 {
-    public class ContextFactory : IContextFactory
+    public class ContextFactory : IDbContextFactory<MainContext>
     {
-        public MainContext CreateContext()
+        private DbContextOptions _options;
+
+        public ContextFactory(DbContextOptions options)
         {
-            return new MainContext();
+            _options = options;
+        }
+
+        public MainContext CreateDbContext()
+        {
+           return new MainContext(_options);
         }
     }
 }

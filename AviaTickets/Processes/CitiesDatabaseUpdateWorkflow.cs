@@ -1,5 +1,5 @@
 ﻿using AviaTickets.Converters;
-using AviaTickets.DB.Abstractions;
+using AviaTickets.DB;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
@@ -18,7 +18,7 @@ namespace AviaTickets.Processes
     public class CitiesDatabaseUpdateWorkflow : ICitiesDatabaseUpdateWorkflow
     {
         private ILogger<ICitiesDatabaseUpdateWorkflow> _logger;
-        private IContextFactory _contextFactory;
+        private IDbContextFactory<MainContext> _contextFactory;
         private ISchedulerFactory _scheduler;
         private CitiesConverter _converter;
 
@@ -31,7 +31,7 @@ namespace AviaTickets.Processes
         public List<ICities>? Info { get { return _info; } }
         public string WorkflowType { get; set; } = "CITIES_DATABASE_UPDATE_WORKFLOW";
 
-        public CitiesDatabaseUpdateWorkflow(IContextFactory contextFactory
+        public CitiesDatabaseUpdateWorkflow(IDbContextFactory<MainContext> contextFactory
                                             , ISchedulerFactory schedulerFactory
                                             , CitiesConverter converter
                                             , ILogger<ICitiesDatabaseUpdateWorkflow> logger)
@@ -71,7 +71,7 @@ namespace AviaTickets.Processes
         }
         public IMessage? GetUpdateDBDate(IMessage? message = default)
         {
-            using (var db = _contextFactory.CreateContext())
+            using (var db = _contextFactory.CreateDbContext())
             {
                 var city = db.Cities.Select(x => new {UpdateDate = x.UpdateDate}).ToList();
                 if (city.Count > 0)
@@ -103,7 +103,7 @@ namespace AviaTickets.Processes
         {
             if (_needUpdate)
             {
-                using (var context = _contextFactory.CreateContext())
+                using (var context = _contextFactory.CreateDbContext())
                 {
                     context.Cities.Select(x => x).ToList().ForEach(x => { context.Remove(x); });
                     _logger.LogInformation($"[{DateTime.Now}] База данных очищена.");
@@ -141,7 +141,7 @@ namespace AviaTickets.Processes
         {
             if (_needUpdate)
             {
-                using (var context = _contextFactory.CreateContext())
+                using (var context = _contextFactory.CreateDbContext())
                 {
                     var strategy = context.Database.CreateExecutionStrategy();
                     await strategy.ExecuteAsync(async () =>
