@@ -284,11 +284,10 @@ namespace AviaTicket_Tests
 
             var process = _serviceProvider.GetService<IAviaTicketsGetWorkflow>();
             var result = process.Start();
-            var data = result.Data;
+            var data = result.GetData<List<Data>>();
 
             Assert.IsTrue(data != null);
-            Assert.IsTrue((data as List<Data>).Count > 0);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(data.Count > 0);            
         }
 
         [TearDown]

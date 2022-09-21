@@ -1,10 +1,10 @@
 ﻿using AviaTickets.Models;
 using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Scheduler;
+using Scheduler.Message;
 using System;
 using System.Collections.Generic;
 
@@ -39,20 +39,8 @@ namespace AviaTickets.Processes
         {
             if (msg != default)
             {
-                if (msg.IsSuccess)
-                {
-                    if (typeof(List<Data>) == msg.DataType)
-                    {
-                        _data = (List<Data>?)msg.Data;
-                        return Start();
-                    }
-                    else throw new Exception("Input Data has incorrect type");
-                    
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception();
-                }
+                _data = msg.GetData<List<Data>>();
+                return Start();
             }
             else throw new Exception("Input Data is null");
         }
@@ -95,7 +83,7 @@ namespace AviaTickets.Processes
                 }
             });
 
-            return new Message(_tickets, _tickets.GetType());
+            return new Message().SendData<List<TicketForm>>(_tickets);
          }        
     }
 }

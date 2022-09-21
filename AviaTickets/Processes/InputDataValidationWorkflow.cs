@@ -1,8 +1,8 @@
 ﻿using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using FluentValidation;
 using Scheduler;
+using Scheduler.Message;
 using System;
 using System.Windows;
 
@@ -28,18 +28,7 @@ namespace AviaTickets.Processes
         }
 
         public IMessage? Start(IMessage? msg)
-        {
-            if (msg != default)
-            {
-                if (msg.IsSuccess)
-                {
-                    return Start();
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception();
-                }
-            }
+        {           
             return Start();
         }
 
@@ -56,11 +45,11 @@ namespace AviaTickets.Processes
 
             foreach (var error in result.Errors)
             {                
-                MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);
-                return new Message(null, null, false, new Exception(error.ErrorMessage), true);
+                MessageBox.Show(error.ErrorMessage, "Error input data", MessageBoxButton.OK, MessageBoxImage.Error);                
+                return new Message().SendError(MsgType.LogError, new Exception(error.ErrorMessage));
             }
 
-            return new Message(null, null, false, new Exception(), true); ;
+            return new Message().SendError(MsgType.LogError, new Exception()); 
         }        
     }
 }

@@ -50,18 +50,7 @@ namespace AviaTickets.Processes
         }
 
         public IMessage? Start(IMessage? msg = default)
-        {
-            if(msg != default)
-            {
-                if(msg.IsSuccess)
-                {
-                    return Start();
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception(); 
-                }
-            }
+        {            
             return Start();
         }
 

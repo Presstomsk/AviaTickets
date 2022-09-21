@@ -22,20 +22,8 @@ namespace AviaTickets.Processes
         {
             if (msg != default)
             {
-                if (msg.IsSuccess)
-                {
-                    if (typeof(string) == msg.DataType)
-                    {
-                        _link = (string)msg.Data;
-                        return Start();
-                    }
-                    else throw new Exception("Input Data has incorrect type");
-
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception();
-                }
+                _link = msg.GetData<string>();
+                return Start();                
             }
             else throw new Exception("Input Data is null");
         }

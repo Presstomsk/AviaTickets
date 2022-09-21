@@ -27,20 +27,8 @@ namespace AviaTickets.Processes
         {
             if (msg != default)
             {
-                if (msg.IsSuccess)
-                {
-                    if (typeof(List<TicketForm>) == msg.DataType)
-                    {
-                        _tickets = (List<TicketForm>?)msg.Data;
-                        return Start();
-                    }
-                    else throw new Exception("Input Data has incorrect type");
-
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception();
-                }
+                _tickets = msg.GetData<List<TicketForm>>();
+                return Start();                
             }
             else throw new Exception("Input Data is null");
         }

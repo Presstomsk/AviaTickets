@@ -1,8 +1,8 @@
 ﻿using AviaTickets.Processes.Abstractions;
-using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.DependencyInjection;
 using Scheduler;
+using Scheduler.Message;
 using System;
 using System.Windows;
 
@@ -78,7 +78,7 @@ namespace AviaTickets.Controller
                 var scheduller = _serviceProvider.GetService<ISchedulerFactory>();
                 var openTicketLinkWorkflow = _serviceProvider.GetService<IOpenTicketLinkWorkflow>();
 
-                var msg = new Message(link,link.GetType());
+                var msg = new Message().SendData<string>(link);
 
                  scheduller?.Create()
                             .Do(openTicketLinkWorkflow.Start)

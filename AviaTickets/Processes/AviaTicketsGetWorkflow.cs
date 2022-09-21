@@ -3,11 +3,11 @@ using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
-using AviaTickets.Processes.Msg;
 using AviaTickets.ViewModel.Absractions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Scheduler;
+using Scheduler.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,18 +52,7 @@ namespace AviaTickets.Processes
         }
 
         public IMessage? Start(IMessage? msg)
-        {
-            if (msg != default)
-            {
-                if (msg.IsSuccess)
-                {
-                    return Start();
-                }
-                else
-                {
-                    throw msg.Error ?? new Exception();
-                }
-            }
+        {            
             return Start();
         }
 
@@ -119,7 +108,7 @@ namespace AviaTickets.Processes
             _data = distinct;
             _data.Sort((a, b) => a.Price.CompareTo(b.Price));
 
-            return new Message(_data,_data.GetType());
+            return new Message().SendData<List<Data>>(_data);
         }       
 
         public string GetCityCode(string mycity, List<ICities>? cities)
