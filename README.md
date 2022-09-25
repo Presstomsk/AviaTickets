@@ -56,6 +56,12 @@
 
 00:01.79  - SaveChanges();
 
-00:00.19  - BulkInsertAsync();
+00:00.15  - BulkInsertAsync();
+
+#### Влияние использования библиотеки EFCore.BulkExtensions на время удаления данных из БД : 
+
+00:01.18  - SaveChanges();
+
+00:00.40  - BulkDeleteAsync();
 
 
