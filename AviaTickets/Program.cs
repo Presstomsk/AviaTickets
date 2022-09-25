@@ -33,9 +33,7 @@ namespace AviaTickets
                 {
                     var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-
-                    var connectionString = configuration.GetConnectionString("MainDb");
+                    var serilog = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();                    
 
                     _serviceProvider = new ServiceCollection()
                                             .AddSingleton(configuration)
@@ -43,8 +41,8 @@ namespace AviaTickets
                                             .AddSingleton(mainWindow)
                                             .AddSingleton<IView, View>()
                                             .AddSingleton<CitiesConverter>()
-                                            .AddSingleton<TicketConverter>()
-                                            .AddDbContextFactory<MainContext>(options => options.UseSqlite(connectionString))                                            
+                                            .AddSingleton<TicketConverter>()                                            
+                                            .AddDbContextFactory<MainContext>()                                            
                                             .AddSingleton<ICitiesListCreatingWorkflow, CitiesListCreatingWorkflow>()
                                             .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
                                             .AddTransient<IAviaTicketsGetWorkflow, AviaTicketsGetWorkflow>()

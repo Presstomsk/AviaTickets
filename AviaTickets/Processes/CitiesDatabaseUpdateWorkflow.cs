@@ -1,5 +1,6 @@
 ﻿using AviaTickets.Converters;
 using AviaTickets.DB;
+using AviaTickets.Models;
 using AviaTickets.Models.Abstractions;
 using AviaTickets.Processes.Abstractions;
 using AviaTickets.Processes.HttpConnect;
@@ -62,10 +63,10 @@ namespace AviaTickets.Processes
         {
             using (var db = _contextFactory.CreateDbContext())
             {
-                var city = db.Cities.Select(x => new {UpdateDate = x.UpdateDate}).ToList();
-                if (city.Count > 0)
+                var updateDate = db.UpdateDate.AsNoTracking().Select(x => new {UpdateDate = x.LastUpdateDate}).ToList();
+                if (updateDate.Count() > 0)
                 {
-                    _updateDate = city.OrderBy(x => x.UpdateDate).First().UpdateDate;
+                    _updateDate = updateDate.FirstOrDefault()?.UpdateDate;
                     _logger.LogInformation($"[{DateTime.Now}] Последнее обновление БД было {_updateDate?.ToString("dd.MM.yyyy")}");
                 }
                 else _logger.LogInformation($"[{DateTime.Now}] БД не заполнена");
@@ -94,9 +95,25 @@ namespace AviaTickets.Processes
             {
                 using (var context = _contextFactory.CreateDbContext())
                 {
-                    context.Cities.Select(x => x).ToList().ForEach(x => { context.Remove(x); });
-                    _logger.LogInformation($"[{DateTime.Now}] База данных очищена.");
-                    await context.SaveChangesAsync();
+                    var strategy = context.Database.CreateExecutionStrategy();
+                    await strategy.ExecuteAsync(async () =>
+                    {
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            try
+                            {
+
+                                await context.BulkDeleteAsync(context.Cities.ToList());
+                                await context.BulkDeleteAsync(context.UpdateDate.ToList());
+                                transaction.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                throw new Exception(ex.Message);
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -138,10 +155,9 @@ namespace AviaTickets.Processes
                         using (var transaction = context.Database.BeginTransaction())
                         {
                             try
-                            {
-
+                            {                                
                                 await context.BulkInsertAsync(_info);
-
+                                await context.BulkInsertAsync(new List<UpdateDate> { new UpdateDate()});
                                 transaction.Commit();
                             }
                             catch (Exception ex)

@@ -34,15 +34,14 @@ namespace AviaTicket_Tests
         public void Setup()
         {
             _configuration = new ConfigurationBuilder().AddJsonFile("testAppsettings.json").Build();
-            _serilog = new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger();
-            var connectionString = _configuration.GetConnectionString("MainDb");
+            _serilog = new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger();            
             _serviceProvider = new ServiceCollection()
                                            .AddSingleton(_configuration)
                                            .AddLogging((config) => config.AddSerilog(_serilog))
                                            .AddSingleton<CitiesConverter>()
                                            .AddSingleton<TicketConverter>()
-                                           .AddSingleton<IView, View>()
-                                           .AddDbContextFactory<MainContext>(options => options.UseSqlite(connectionString))
+                                           .AddSingleton<IView, View>()                                           
+                                           .AddDbContextFactory<MainContext>()
                                            .AddSingleton<ICitiesDatabaseUpdateWorkflow, CitiesDatabaseUpdateWorkflow>()
                                            .AddSingleton<ICitiesListCreatingWorkflow, CitiesListCreatingWorkflow>()
                                            .AddTransient<IInputDataValidationWorkflow, InputDataValidationWorkflow>()
@@ -57,6 +56,7 @@ namespace AviaTicket_Tests
             {
                 db.Database.Migrate();
                 db.Cities.Select(x => x).ToList().ForEach(x => { db.Remove(x); });
+                db.UpdateDate.Select(x => x).ToList().ForEach(x => { db.Remove(x); });
                 db.SaveChanges();
             }
         }
@@ -87,13 +87,15 @@ namespace AviaTicket_Tests
             var testCity = new Cities
             {
                 City = city,
-                Code = code,
-                UpdateDate = DateTime.Now.AddDays(daysAgo)
+                Code = code,               
             };
+
+            var update = new UpdateDate { LastUpdateDate = DateTime.Now.AddDays(daysAgo) };
 
             using (var db = _contextFactory.CreateDbContext())
             {
                 db.Cities.Add(testCity);
+                db.UpdateDate.Add(update);
                 db.SaveChanges();
             }
 
@@ -109,7 +111,7 @@ namespace AviaTicket_Tests
                 elementInTestDB = db.Cities.First();
             }
 
-            Assert.IsTrue(process.UpdateDate == testCity.UpdateDate);
+            Assert.IsTrue(process.UpdateDate == update.LastUpdateDate);
             Assert.IsFalse(process.IsNeedUpdate);
             Assert.IsTrue(process.Info == default);
             Assert.IsTrue(numberElementsInDB == 1);
@@ -126,12 +128,14 @@ namespace AviaTicket_Tests
             {
                 City = city,
                 Code = code,
-                UpdateDate = DateTime.Now.AddDays(daysAgo)
             };
+
+            var update = new UpdateDate { LastUpdateDate = DateTime.Now.AddDays(daysAgo) };
 
             using (var db = _contextFactory.CreateDbContext())
             {
                 db.Cities.Add(testCity);
+                db.UpdateDate.Add(update);
                 db.SaveChanges();
             }
 
@@ -147,7 +151,7 @@ namespace AviaTicket_Tests
                 elementInTestDB = db.Cities.First();
             }
 
-            Assert.IsTrue(process.UpdateDate == testCity.UpdateDate);
+            Assert.IsTrue(process.UpdateDate == update.LastUpdateDate);
             Assert.IsTrue(process.IsNeedUpdate);
             Assert.IsTrue(process.Info.Count > 0);
             Assert.IsTrue(numberElementsInDB == process.Info.Count);
@@ -161,12 +165,14 @@ namespace AviaTicket_Tests
             {
                 City = city,
                 Code = code,
-                UpdateDate = DateTime.Now
             };
+
+            var update = new UpdateDate { LastUpdateDate = DateTime.Now };
 
             using (var db = _contextFactory.CreateDbContext())
             {
                 db.Cities.Add(testCity);
+                db.UpdateDate.Add(update);
                 db.SaveChanges();
             }
 
@@ -297,17 +303,5 @@ namespace AviaTicket_Tests
             _serilog = default;
             _serviceProvider = default;
         }       
-
-        public class TestContextFactory : ContextFactory
-        {
-            public TestContextFactory(DbContextOptions options) : base(options) 
-            {                
-            }
-
-            public new MainContext CreateDbContext()
-            {
-                return base.CreateDbContext();
-            }
-        }
     }
 }

@@ -14,7 +14,6 @@ namespace AviaTickets.Models
         [MaybeNull]
         public string City { get; set; }
         [MaybeNull]
-        public string Code { get; set; }
-        public DateTime UpdateDate { get; set; } = DateTime.Now;
+        public string Code { get; set; }        
     }
 }

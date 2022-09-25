@@ -45,7 +45,7 @@ namespace AviaTickets.Processes
         {
             using (var context = _contextFactory.CreateDbContext())
             {
-                _viewModel.Cities = context.Cities.Select(x => new Cities{ City = x.City, Code = x.Code}).ToList<ICities>();
+                _viewModel.Cities = context.Cities.AsNoTracking().Select(x => new Cities{ City = x.City, Code = x.Code}).ToList<ICities>();
             }
 
             return message;

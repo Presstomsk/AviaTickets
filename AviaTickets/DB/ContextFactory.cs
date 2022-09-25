@@ -3,17 +3,13 @@
 namespace AviaTickets.DB
 {
     public class ContextFactory : IDbContextFactory<MainContext>
-    {
-        private DbContextOptions _options;
-
-        public ContextFactory(DbContextOptions options)
-        {
-            _options = options;
+    {       
+        public ContextFactory()
+        {            
         }
-
         public MainContext CreateDbContext()
         {
-           return new MainContext(_options);
+           return new MainContext();
         }
     }
 }
